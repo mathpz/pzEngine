@@ -1,9 +1,9 @@
 CFLAGS = -std=c++17 -O2
 LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
 
-VulkanTest: src/main.cpp
+VulkanTest: src/*.cpp src/*.hpp
 	mkdir -p build
-	g++ $(CFLAGS) -o build/VulkanTest src/main.cpp $(LDFLAGS)
+	g++ $(CFLAGS) -o build/VulkanTest src/*.cpp $(LDFLAGS)
 
 .PHONY: test clean
 

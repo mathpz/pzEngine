@@ -1,6 +1,8 @@
 #pragma once
 
 #include "pzWindow.hpp"
+#include "pzPipeline.hpp"
+#include "pzDevice.hpp"
 
 namespace pz
 {
@@ -16,7 +18,8 @@ namespace pz
 
         private:
             PzWindow pzWindow{WIDTH, HEIGHT, "pzEngine"};
-
+            PzDevice pzDevice{pzWindow};
+            PzPipeline pzPipeline{pzDevice, "shaders/simple_shader.vert.spv", "shaders/simple_shader.frag.spv", PzPipeline::defaultPipelineConfigInfo(WIDTH, HEIGHT)};
     };
 
 } // namespace pz

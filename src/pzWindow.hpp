@@ -17,6 +17,7 @@ namespace pz
             PzWindow &operator=(const PzWindow&) = delete;
 
             bool shouldClose() { return glfwWindowShouldClose(window); }
+            VkExtent2D getExtent() { return {static_cast<uint32_t>(windowWidth), static_cast<uint32_t>(windowHeight)}; }
 
             void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
         private:

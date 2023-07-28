@@ -3,6 +3,11 @@
 #include "pzWindow.hpp"
 #include "pzPipeline.hpp"
 #include "pzDevice.hpp"
+#include "pzSwapChain.hpp"
+
+// std
+#include <memory>
+#include <vector>
 
 namespace pz
 {
@@ -14,12 +19,24 @@ namespace pz
             static constexpr int WIDTH = 800;
             static constexpr int HEIGHT = 600;
 
+            FirstApp(const FirstApp&) = delete;
+            FirstApp &operator=(const FirstApp&) = delete;
+
             void run();
 
         private:
+            void createPipelineLayout();
+            void createPipeline();
+            void createCommandBuffers();
+            void drawFrame();
+
             PzWindow pzWindow{WIDTH, HEIGHT, "pzEngine"};
             PzDevice pzDevice{pzWindow};
-            PzPipeline pzPipeline{pzDevice, "shaders/simple_shader.vert.spv", "shaders/simple_shader.frag.spv", PzPipeline::defaultPipelineConfigInfo(WIDTH, HEIGHT)};
+            PzSwapChain pzSwapChain{pzDevice, pzWindow.getExtent()};
+            std::unique_ptr<PzPipeline> pzPipeline;
+            VkPipelineLayout pipelineLayout;
+            std::vector<VkCommandBuffer> commandBuffers;
+
     };
 
 } // namespace pz

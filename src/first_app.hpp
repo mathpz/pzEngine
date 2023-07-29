@@ -4,6 +4,7 @@
 #include "pzPipeline.hpp"
 #include "pzDevice.hpp"
 #include "pzSwapChain.hpp"
+#include "pzModel.hpp"
 
 // std
 #include <memory>
@@ -25,6 +26,7 @@ namespace pz
             void run();
 
         private:
+            void loadModels();
             void createPipelineLayout();
             void createPipeline();
             void createCommandBuffers();
@@ -36,6 +38,7 @@ namespace pz
             std::unique_ptr<PzPipeline> pzPipeline;
             VkPipelineLayout pipelineLayout;
             std::vector<VkCommandBuffer> commandBuffers;
+            std::unique_ptr<PzModel> pzModel;
 
     };
 

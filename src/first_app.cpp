@@ -7,6 +7,7 @@ namespace pz
 {
     FirstApp::FirstApp()
     {
+        loadModels();
         createPipelineLayout();
         createPipeline();
         createCommandBuffers();
@@ -15,6 +16,17 @@ namespace pz
     FirstApp::~FirstApp()
     {
         vkDestroyPipelineLayout(pzDevice.device(), pipelineLayout, nullptr);
+    }
+
+    void FirstApp::loadModels()
+    {
+        std::vector<PzModel::Vertex> vertices{
+            {{0.0f, -0.5f}},
+            {{0.5f, 0.5f}},
+            {{-0.5f, 0.5f}}
+        };
+
+        pzModel = std::make_unique<PzModel>(pzDevice, vertices);
     }
 
     void FirstApp::createPipelineLayout()
@@ -94,7 +106,8 @@ namespace pz
             vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
         
             pzPipeline->bind(commandBuffers[i]);
-            vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+            pzModel->bind(commandBuffers[i]);
+            pzModel->draw(commandBuffers[i]);
 
             vkCmdEndRenderPass(commandBuffers[i]);
             if(vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS)

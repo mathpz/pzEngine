@@ -1,0 +1,2 @@
+- Do a better memory management system (VMA - Vulkan Memory Allocator)
+- Check Render Pass compatibility

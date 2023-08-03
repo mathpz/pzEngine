@@ -35,7 +35,7 @@ class PzDevice {
 
   // Not copyable or movable
   PzDevice(const PzDevice &) = delete;
-  void operator=(const PzDevice &) = delete;
+  PzDevice &operator=(const PzDevice &) = delete;
   PzDevice(PzDevice &&) = delete;
   PzDevice &operator=(PzDevice &&) = delete;
 

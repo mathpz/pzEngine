@@ -18,14 +18,18 @@ namespace pz
 
             bool shouldClose() { return glfwWindowShouldClose(window); }
             VkExtent2D getExtent() { return {static_cast<uint32_t>(windowWidth), static_cast<uint32_t>(windowHeight)}; }
+            bool wasWindowResized() { return frameBufferResized; }
+            void resetWindowResizedFlag() { frameBufferResized = false; }
 
             void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
         private:
+            static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
              GLFWwindow* window;
              std::string windowName;
 
-             const int windowWidth;
-             const int windowHeight;
+             int windowWidth;
+             int windowHeight;
+             bool frameBufferResized = false;
     
         void initWindow();
 

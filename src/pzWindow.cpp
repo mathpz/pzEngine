@@ -30,8 +30,18 @@ namespace pz
         glfwInit();
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
         window = glfwCreateWindow(windowWidth, windowHeight, windowName.c_str(), nullptr, nullptr);
+        glfwSetWindowUserPointer(window, this);
+        glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
+    }
+
+    void PzWindow::framebufferResizeCallback(GLFWwindow* window, int width, int height)
+    {
+        auto pzWindow = reinterpret_cast<PzWindow*>(glfwGetWindowUserPointer(window));
+        pzWindow->frameBufferResized = true;
+        pzWindow->windowWidth = width;
+        pzWindow->windowHeight = height;
     }
 } // namespace pz

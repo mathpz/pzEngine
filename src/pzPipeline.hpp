@@ -9,14 +9,18 @@ namespace pz
 {
     struct PipelineConfigInfo 
     {
-        VkViewport viewport;                                        // The viewport describes the region of the framebuffer that the output will be rendered to
-        VkRect2D scissor;                                           // The scissor describes the region of the framebuffer that the output will be rendered to
+        PipelineConfigInfo(const PipelineConfigInfo&) = delete;
+        PipelineConfigInfo &operator=(const PipelineConfigInfo&) = delete;
+
+        VkPipelineViewportStateCreateInfo viewportInfo;             
         VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
         VkPipelineRasterizationStateCreateInfo rasterizationInfo;
         VkPipelineMultisampleStateCreateInfo multisampleInfo;
         VkPipelineColorBlendAttachmentState colorBlendAttachment;
         VkPipelineColorBlendStateCreateInfo colorBlendInfo;
         VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
+        std::vector<VkDynamicState> dynamicStateEnables;
+        VkPipelineDynamicStateCreateInfo dynamicStateInfo;
         VkPipelineLayout pipelineLayout = nullptr;
         VkRenderPass renderPass = nullptr;
         uint32_t subpass = 0;
@@ -30,8 +34,9 @@ namespace pz
 
             PzPipeline(const PzPipeline&) = delete;
             PzPipeline &operator=(const PzPipeline&) = delete;
+            PzPipeline() = default;
 
-            static PipelineConfigInfo defaultPipelineConfigInfo(uint32_t width, uint32_t height);
+            static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
 
             void bind(VkCommandBuffer commandBuffer);
 

@@ -30,11 +30,14 @@ namespace pz
             void createPipelineLayout();
             void createPipeline();
             void createCommandBuffers();
+            void freeCommandBuffers();
             void drawFrame();
+            void recreateSwapChain();
+            void recordCommandBuffer(int imageIndex);
 
             PzWindow pzWindow{WIDTH, HEIGHT, "pzEngine"};
             PzDevice pzDevice{pzWindow};
-            PzSwapChain pzSwapChain{pzDevice, pzWindow.getExtent()};
+            std::unique_ptr<PzSwapChain> pzSwapChain;
             std::unique_ptr<PzPipeline> pzPipeline;
             VkPipelineLayout pipelineLayout;
             std::vector<VkCommandBuffer> commandBuffers;

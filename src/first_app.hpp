@@ -4,7 +4,7 @@
 #include "pzPipeline.hpp"
 #include "pzDevice.hpp"
 #include "pzSwapChain.hpp"
-#include "pzModel.hpp"
+#include "pzGameObject.hpp"
 
 // std
 #include <memory>
@@ -26,7 +26,7 @@ namespace pz
             void run();
 
         private:
-            void loadModels();
+            void loadGameObjects();
             void createPipelineLayout();
             void createPipeline();
             void createCommandBuffers();
@@ -34,6 +34,7 @@ namespace pz
             void drawFrame();
             void recreateSwapChain();
             void recordCommandBuffer(int imageIndex);
+            void renderGameObjects(VkCommandBuffer commandBuffer);
 
             PzWindow pzWindow{WIDTH, HEIGHT, "pzEngine"};
             PzDevice pzDevice{pzWindow};
@@ -41,7 +42,7 @@ namespace pz
             std::unique_ptr<PzPipeline> pzPipeline;
             VkPipelineLayout pipelineLayout;
             std::vector<VkCommandBuffer> commandBuffers;
-            std::unique_ptr<PzModel> pzModel;
+            std::vector<PzGameObject> gameObjects;
 
     };
 

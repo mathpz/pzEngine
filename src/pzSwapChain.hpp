@@ -27,7 +27,7 @@ class PzSwapChain {
       VkRenderPass getRenderPass() { return renderPass; }
       VkImageView getImageView(int index) { return swapChainImageViews[index]; }
       size_t imageCount() { return swapChainImages.size(); }
-      VkFormat getSwapChainImageFormat() { return swapChainImageFormat; }
+      VkFormat getSwapChainImageFormat() { return m_swapChainImageFormat; }
       VkExtent2D getSwapChainExtent() { return swapChainExtent; }
       uint32_t width() { return swapChainExtent.width; }
       uint32_t height() { return swapChainExtent.height; }
@@ -39,6 +39,11 @@ class PzSwapChain {
 
       VkResult acquireNextImage(uint32_t *imageIndex);
       VkResult submitCommandBuffers(const VkCommandBuffer *buffers, uint32_t *imageIndex);
+
+      bool compareSwapFormats(const PzSwapChain &swapChain) const {
+        return swapChain.m_swapChainDepthFormat == m_swapChainDepthFormat &&
+               swapChain.m_swapChainImageFormat == m_swapChainImageFormat;
+      }
 
   private:
       void init();
@@ -56,7 +61,8 @@ class PzSwapChain {
           const std::vector<VkPresentModeKHR> &availablePresentModes);
       VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
 
-      VkFormat swapChainImageFormat;
+      VkFormat m_swapChainImageFormat;
+      VkFormat m_swapChainDepthFormat;
       VkExtent2D swapChainExtent;
 
       std::vector<VkFramebuffer> swapChainFramebuffers;

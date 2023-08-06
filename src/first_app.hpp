@@ -1,10 +1,9 @@
 #pragma once
 
 #include "pzWindow.hpp"
-#include "pzPipeline.hpp"
 #include "pzDevice.hpp"
-#include "pzSwapChain.hpp"
 #include "pzGameObject.hpp"
+#include "pzRenderer.hpp"
 
 // std
 #include <memory>
@@ -27,21 +26,10 @@ namespace pz
 
         private:
             void loadGameObjects();
-            void createPipelineLayout();
-            void createPipeline();
-            void createCommandBuffers();
-            void freeCommandBuffers();
-            void drawFrame();
-            void recreateSwapChain();
-            void recordCommandBuffer(int imageIndex);
-            void renderGameObjects(VkCommandBuffer commandBuffer);
 
             PzWindow pzWindow{WIDTH, HEIGHT, "pzEngine"};
             PzDevice pzDevice{pzWindow};
-            std::unique_ptr<PzSwapChain> pzSwapChain;
-            std::unique_ptr<PzPipeline> pzPipeline;
-            VkPipelineLayout pipelineLayout;
-            std::vector<VkCommandBuffer> commandBuffers;
+            PzRenderer pzRenderer{pzWindow, pzDevice};
             std::vector<PzGameObject> gameObjects;
 
     };

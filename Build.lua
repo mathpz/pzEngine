@@ -2,7 +2,7 @@
 workspace "pzEngine"
    architecture "x64"
    configurations { "Debug", "Release", "Dist" }
-   startproject "App"
+   startproject "First-App"
 
    OutputDir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 
@@ -17,4 +17,3 @@ include "App/Build-App.lua"
 -- g++ -m64 -std=c++17 -c -g -I/f/programmingProjects/pzEngine/Vendor/VulkanSDKWindows/Vulkan.1.3.236.0/include -MMD -MP -MF "vkInstance.o.d" -o vkInstance.o vkInstance.cpp
 -- Windows LINK WHEN BUILDING WITH GMAKE2
 -- g++ -m64 -std=c++17 -o firsttest vkInstance.o -L/c/msys64/mingw64/lib/ -lvulkan-1
-

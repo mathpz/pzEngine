@@ -33,8 +33,6 @@ define PREBUILDCMDS
 endef
 define PRELINKCMDS
 endef
-define POSTBUILDCMDS
-endef
 
 ifeq ($(config),debug)
 TARGETDIR = ../Binaries/windows-x86_64/Debug/pzEngine-Core
@@ -44,6 +42,10 @@ DEFINES += -DPZ_PLATFORM_WINDOWS -DPZ_BUILD_DLL -DDEBUG
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c++17
 ALL_LDFLAGS += $(LDFLAGS) -LC:/msys64/mingw64/lib -L/usr/lib64 -m64 -shared -Wl,--out-implib="../Binaries/windows-x86_64/Debug/pzEngine-Core/pzEngine-Core.lib"
+define POSTBUILDCMDS
+	@echo Copying DLLs to App
+	cp ../Binaries/windows-x86_64/Debug/pzEngine-Core/pzEngine-Core.dll ../Binaries/windows-x86_64/Debug/First-App/
+endef
 
 else ifeq ($(config),release)
 TARGETDIR = ../Binaries/windows-x86_64/Release/pzEngine-Core
@@ -53,6 +55,10 @@ DEFINES += -DPZ_PLATFORM_WINDOWS -DPZ_BUILD_DLL -DRELEASE
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -g -std=c++17
 ALL_LDFLAGS += $(LDFLAGS) -LC:/msys64/mingw64/lib -L/usr/lib64 -m64 -shared -Wl,--out-implib="../Binaries/windows-x86_64/Release/pzEngine-Core/pzEngine-Core.lib"
+define POSTBUILDCMDS
+	@echo Copying DLLs to App
+	cp ../Binaries/windows-x86_64/Release/pzEngine-Core/pzEngine-Core.dll ../Binaries/windows-x86_64/Release/First-App/
+endef
 
 else ifeq ($(config),dist)
 TARGETDIR = ../Binaries/windows-x86_64/Dist/pzEngine-Core
@@ -62,6 +68,10 @@ DEFINES += -DPZ_PLATFORM_WINDOWS -DPZ_BUILD_DLL -DDIST
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++17
 ALL_LDFLAGS += $(LDFLAGS) -LC:/msys64/mingw64/lib -L/usr/lib64 -m64 -shared -Wl,--out-implib="../Binaries/windows-x86_64/Dist/pzEngine-Core/pzEngine-Core.lib" -s
+define POSTBUILDCMDS
+	@echo Copying DLLs to App
+	cp ../Binaries/windows-x86_64/Dist/pzEngine-Core/pzEngine-Core.dll ../Binaries/windows-x86_64/Dist/First-App/
+endef
 
 endif
 

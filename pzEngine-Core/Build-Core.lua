@@ -26,7 +26,6 @@ project "pzEngine-Core"
 
     -- WINDOWS BUILD WITH GMAKE2
     filter {"system:windows", "action:gmake2"}
-        printf("Building for Windows with gmake2")
         prebuildcommands 
         { 
             GLSLC_PATH .. "/Windows/glslc.exe Shaders/simple_shader.vert -o Shaders/simple_shader.vert.spv", 
@@ -36,11 +35,6 @@ project "pzEngine-Core"
         
         systemversion "latest"
         defines { "PZ_PLATFORM_WINDOWS", "PZ_BUILD_DLL" }
-
-        -- Include Vulkan SDK
-        includedirs 
-        { 
-        }
 
         links 
         {
@@ -52,10 +46,17 @@ project "pzEngine-Core"
         {
             "C:/msys64/mingw64/lib"
         }
+        
+        postbuildmessage ("Compiled for Windows")
+        postbuildmessage ("Copying DLLs to App")
+        
+        postbuildcommands
+        { 
+            ("cp %{cfg.buildtarget.relpath} ../Binaries/" .. OutputDir .. "/First-App/")
+        }
 
-    -- LINUX BUILD (TODO: Complete)
+    --  TODO COMPLETE LINUX BUILD 
     filter {"system:linux"}
-        printf("Building for Linux")
         prebuildcommands { GLSLC_PATH .. "/Linux/glslc Shaders/simple_shader.vert -o Shaders/simple_shader.vert.spv", GLSLC_PATH .. "/Linux/glslc Shaders/simple_shader.frag -o Shaders/simple_shader.frag.spv" }
         buildoptions { "-I. -I$(VULKAN_SDK_PATH)/include"}
         linkoptions { "-L$(VULKAN_SDK_PATH)/lib `pkg-config --static --libs glfw3` -lvulkan" }

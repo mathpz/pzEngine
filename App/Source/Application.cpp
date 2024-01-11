@@ -14,7 +14,7 @@ public:
 };
 
 
-pz::Application* pz::CreateApplication()
+pz::Application* pz::createApplication()
 {
     return new Application();
 }

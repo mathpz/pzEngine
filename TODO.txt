@@ -1,6 +1,10 @@
-- Do a better memory management system (VMA - Vulkan Memory Allocator)
-- Check Render Pass compatibility
-- Change Game Object to Entity Component System 
+-- Do a better memory management system (VMA - Vulkan Memory Allocator)
+-- Check Render Pass compatibility
+-- Change Game Object to Entity Component System 
+-- Write a proper README.md
+
+-- The building system is bleeeh ugly feio mal organizado FIX IT
+
 
 
 g++ -E -DPZ_PLATFORM_WINDOWS -DPZ_BUILD_DLL -DDEBUG -ISource -IShaders -IC:/msys64/mingw64/include/vulkan -IC:/msys64/mingw64/include/GLFW -m64 -g -std=c++17 -o "preprocessed_output.txt" "Source/Application.cpp"

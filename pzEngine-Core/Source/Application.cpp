@@ -12,7 +12,7 @@ namespace pz
 {
     Application::Application()
     {
-        loadGameObjects();
+        // loadGameObjects();
     }
 
     Application::~Application()
@@ -21,6 +21,8 @@ namespace pz
 
     void Application::Run()
     {
+        while(true);
+        /*
         SimpleRenderSystem simpleRenderSystem{pzDevice, pzRenderer.getSwapChainRenderPass()};
 
         while (!pzWindow.shouldClose())
@@ -36,9 +38,9 @@ namespace pz
             }
         }
 
-        vkDeviceWaitIdle(pzDevice.device());
+        vkDeviceWaitIdle(pzDevice.device()); */
     }
-    
+  /*  
     void Application::loadGameObjects()
     {
         std::vector<PzModel::Vertex> vertices{
@@ -55,6 +57,6 @@ namespace pz
         triangle.transform2d.rotation = .25f * glm::two_pi<float>();
 
         gameObjects.push_back(std::move(triangle));
-    }
+    } */
 
 } // namespace pz

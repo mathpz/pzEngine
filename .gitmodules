@@ -1,0 +1,3 @@
+[submodule "pzEngine-Core/vendor/spdlog"]
+	path = pzEngine-Core/vendor/spdlog
+	url = git@github.com:gabime/spdlog.git

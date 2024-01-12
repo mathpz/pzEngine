@@ -1,5 +1,5 @@
 project "First-App"
-   kind "WindowedApp"
+   kind "ConsoleApp"
    language "C++"
    cppdialect "C++17"
    targetdir "Binaries/%{cfg.buildcfg}"
@@ -16,7 +16,8 @@ project "First-App"
 
       -- vendor
       "C:/msys64/mingw64/include/",
-      "../Vendor/glm"
+      "../Vendor/glm",
+      "../pzEngine-Core/vendor/spdlog/include"
    }
 
     links

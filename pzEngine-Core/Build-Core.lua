@@ -16,7 +16,7 @@ project "pzEngine-Core"
         -- Vendor
         "C:/msys64/mingw64/include/",
         "../Vendor/glm",
-
+        "vendor/spdlog/include"
     }
    
     targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
@@ -32,8 +32,8 @@ project "pzEngine-Core"
             GLSLC_PATH .. "/Windows/glslc.exe Shaders/simple_shader.frag -o Shaders/simple_shader.frag.spv" 
         
         }
-        
         systemversion "latest"
+        
         defines { "PZ_PLATFORM_WINDOWS", "PZ_BUILD_DLL" }
 
         links 

@@ -2,14 +2,14 @@
 
 #include "Core.hpp"
 
-#include "pzWindow.hpp"
-#include "pzDevice.hpp"
-#include "pzGameObject.hpp"
-#include "pzRenderer.hpp"
+// #include "pzWindow.hpp"
+// #include "pzDevice.hpp"
+// #include "pzGameObject.hpp"
+// #include "pzRenderer.hpp"
 
 // std
-#include <memory>
-#include <vector>
+// #include <memory>
+// #include <vector>
 
 namespace pz
 {
@@ -19,24 +19,24 @@ namespace pz
         Application();
         virtual ~Application();
 
-        static constexpr int WIDTH = 800;
-        static constexpr int HEIGHT = 600;
-
-        Application(const Application&) = delete;
-        Application &operator=(const Application&) = delete;
+    //    static constexpr int WIDTH = 800;
+    //    static constexpr int HEIGHT = 600;
+    //
+    //    Application(const Application&) = delete;
+    //    Application &operator=(const Application&) = delete;
 
         void Run();
 
     private:
-        void loadGameObjects();
+    //    void loadGameObjects();
 
-        PzWindow pzWindow{WIDTH, HEIGHT, "pzEngine"};
-        PzDevice pzDevice{pzWindow};
-        PzRenderer pzRenderer{pzWindow, pzDevice};
-        std::vector<PzGameObject> gameObjects;
+    //    PzWindow pzWindow{WIDTH, HEIGHT, "pzEngine"};
+    //    PzDevice pzDevice{pzWindow};
+    //    PzRenderer pzRenderer{pzWindow, pzDevice};
+    //    std::vector<PzGameObject> gameObjects;
 
     };
-
+    
     // To be defined in CLIENT
     Application* createApplication();
 

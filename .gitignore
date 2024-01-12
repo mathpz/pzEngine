@@ -6,6 +6,7 @@
 *.exe
 *.o
 *.so
+*.o.d
 
 # Folders #
 ###################
@@ -18,3 +19,10 @@
 ###################
 test.cpp
 vkInstance.cpp
+/Makefile
+**/Makefile
+first_app.cpp
+first_app.hpp
+App/Makefile
+pzEngine-Core/Makefile
+main.cpp

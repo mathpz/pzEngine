@@ -1,10 +1,6 @@
 #include "pzDevice.hpp"
 
-// std headers
-#include <cstring>
-#include <iostream>
-#include <set>
-#include <unordered_set>
+#include "pzpch.hpp"
 
 namespace pz {
 

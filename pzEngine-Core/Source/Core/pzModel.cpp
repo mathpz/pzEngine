@@ -1,9 +1,5 @@
 #include "pzModel.hpp"
 
-// std
-#include <cassert>
-#include <cstring>
-
 namespace pz
 {
     PzModel::PzModel(PzDevice &pzDevice, const std::vector<Vertex> &vertices) : pzDevice{pzDevice}

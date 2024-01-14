@@ -1,9 +1,12 @@
 #include "Application.hpp"
 
+// precompiled headers
+#include "pzpch.hpp"
+
 // pzEngine
 #include "Events/ApplicationEvent.hpp"
 #include "Log/Log.hpp"
-#include "simpleRenderSystem.hpp"
+#include "Core/simpleRenderSystem.hpp"
 
 // GLM
 #define  GLM_FORCE_RADIANS

@@ -2,8 +2,8 @@
 
 // For use by pzEngine applications
 #include "Source/Application.hpp"
-#include "Source/Log/Log.hpp"
+#include "Log/Log.hpp"
 
-// ---Entry Point---------------------
-#include "Source/EntryPoint.hpp"
+// ------------Entry Point------------
+#include "Source/Core/EntryPoint.hpp"
 // -----------------------------------

@@ -1,13 +1,7 @@
 #include "pzSwapChain.hpp"
 
-// std
-#include <array>
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <limits>
-#include <set>
-#include <stdexcept>
+// pre compiled header
+#include "pzpch.hpp"
 
 namespace pz
 {

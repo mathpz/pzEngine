@@ -1,12 +1,10 @@
 #include "pzPipeline.hpp"
 
+// pre compiled header
+#include "pzpch.hpp"
+
 #include "pzModel.hpp"
 
-// std
-#include <fstream>
-#include <stdexcept>
-#include <iostream>
-#include <cassert>
 
 namespace pz
 {

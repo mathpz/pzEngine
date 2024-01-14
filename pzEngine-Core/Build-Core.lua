@@ -5,6 +5,8 @@ project "pzEngine-Core"
    targetdir "Binaries/%{cfg.buildcfg}"
    staticruntime "off"
 
+   pchheader "pzpch.hpp"
+   
    files { "Source/**.hpp", "Source/**.cpp", "pzEngine.hpp" }
 
    includedirs
@@ -26,8 +28,8 @@ project "pzEngine-Core"
 
     -- WINDOWS BUILD WITH GMAKE2
     filter {"system:windows", "action:gmake2"}
-        prebuildcommands 
-        { 
+        prebuildcommands
+        {
             GLSLC_PATH .. "/Windows/glslc.exe Shaders/simple_shader.vert -o Shaders/simple_shader.vert.spv", 
             GLSLC_PATH .. "/Windows/glslc.exe Shaders/simple_shader.frag -o Shaders/simple_shader.frag.spv" 
         
@@ -55,6 +57,9 @@ project "pzEngine-Core"
         { 
             ("cp %{cfg.buildtarget.relpath} ../Binaries/" .. OutputDir .. "/First-App/")
         }
+
+    filter {"system:windows", "action:vs*"}
+        pchsource "Source/pzpch.cpp"
 
     --  TODO COMPLETE LINUX BUILD 
     filter {"system:linux"}

@@ -2,9 +2,6 @@
 
 #include "pzModel.hpp"
 
-// std
-#include <memory>
-
 namespace pz
 {
     struct Transform2dComponent

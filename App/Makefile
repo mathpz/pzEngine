@@ -19,7 +19,7 @@ endif
 # #############################################
 
 RESCOMP = windres
-INCLUDES += -ISource -I../pzEngine-Core -IC:/msys64/mingw64/include -I../Vendor/glm
+INCLUDES += -ISource -I../pzEngine-Core -I../pzEngine-Core/Source -IC:/msys64/mingw64/include -I../Vendor/glm -I../pzEngine-Core/vendor/spdlog/include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
@@ -38,9 +38,9 @@ OBJDIR = ../Binaries/Intermediates/windows-x86_64/Debug/First-App
 DEFINES += -DPZ_PLATFORM_WINDOWS -DDEBUG
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -g -std=c++17
-LIBS += ../Binaries/windows-x86_64/Debug/pzEngine-Core/pzEngine-Core.lib -lglfw3
+LIBS += ../Binaries/windows-x86_64/Debug/pzEngine-Core/pzEngine-Core.lib -lglfw3 -lgdi32
 LDDEPS += ../Binaries/windows-x86_64/Debug/pzEngine-Core/pzEngine-Core.lib
-ALL_LDFLAGS += $(LDFLAGS) -L../Vendor/glfw-3.3.8.bin.WIN64/lib-mingw-w64 -L/usr/lib64 -m64 -mwindows
+ALL_LDFLAGS += $(LDFLAGS) -L../Vendor/glfw-3.3.8.bin.WIN64/lib-mingw-w64 -L/usr/lib64 -m64
 
 else ifeq ($(config),release)
 TARGETDIR = ../Binaries/windows-x86_64/Release/First-App
@@ -49,9 +49,9 @@ OBJDIR = ../Binaries/Intermediates/windows-x86_64/Release/First-App
 DEFINES += -DPZ_PLATFORM_WINDOWS -DRELEASE
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -g
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -g -std=c++17
-LIBS += ../Binaries/windows-x86_64/Release/pzEngine-Core/pzEngine-Core.lib -lglfw3
+LIBS += ../Binaries/windows-x86_64/Release/pzEngine-Core/pzEngine-Core.lib -lglfw3 -lgdi32
 LDDEPS += ../Binaries/windows-x86_64/Release/pzEngine-Core/pzEngine-Core.lib
-ALL_LDFLAGS += $(LDFLAGS) -L../Vendor/glfw-3.3.8.bin.WIN64/lib-mingw-w64 -L/usr/lib64 -m64 -mwindows
+ALL_LDFLAGS += $(LDFLAGS) -L../Vendor/glfw-3.3.8.bin.WIN64/lib-mingw-w64 -L/usr/lib64 -m64
 
 else ifeq ($(config),dist)
 TARGETDIR = ../Binaries/windows-x86_64/Dist/First-App
@@ -60,9 +60,9 @@ OBJDIR = ../Binaries/Intermediates/windows-x86_64/Dist/First-App
 DEFINES += -DPZ_PLATFORM_WINDOWS -DDIST
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -std=c++17
-LIBS += ../Binaries/windows-x86_64/Dist/pzEngine-Core/pzEngine-Core.lib -lglfw3
+LIBS += ../Binaries/windows-x86_64/Dist/pzEngine-Core/pzEngine-Core.lib -lglfw3 -lgdi32
 LDDEPS += ../Binaries/windows-x86_64/Dist/pzEngine-Core/pzEngine-Core.lib
-ALL_LDFLAGS += $(LDFLAGS) -L../Vendor/glfw-3.3.8.bin.WIN64/lib-mingw-w64 -L/usr/lib64 -m64 -mwindows -s
+ALL_LDFLAGS += $(LDFLAGS) -L../Vendor/glfw-3.3.8.bin.WIN64/lib-mingw-w64 -L/usr/lib64 -m64 -s
 
 endif
 

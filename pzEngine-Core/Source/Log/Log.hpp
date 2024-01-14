@@ -1,7 +1,7 @@
 #pragma once
 
 // pzEngine
-#include "../Core.hpp"
+#include "Core/Core.hpp"
 
 // vendor
 #include "spdlog/spdlog.h"

@@ -1,13 +1,11 @@
 #pragma once
 
+// pre compiled header
+#include "pzpch.hpp"
+
 #include "pzWindow.hpp"
 #include "pzDevice.hpp"
 #include "pzSwapChain.hpp"
-
-// std
-#include <memory>
-#include <vector>
-#include <cassert>
 
 namespace pz
 {

@@ -1,10 +1,9 @@
 #pragma once
 
-#include "pzWindow.hpp"
+// pre compiled header
+#include "pzpch.hpp"
 
-// std lib headers
-#include <string>
-#include <vector>
+#include "pzWindow.hpp"
 
 namespace pz {
 

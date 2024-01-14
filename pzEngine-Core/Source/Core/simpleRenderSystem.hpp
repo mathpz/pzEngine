@@ -1,12 +1,10 @@
 #pragma once
 
+#include "pzpch.hpp"
+
 #include "pzPipeline.hpp"
 #include "pzDevice.hpp"
 #include "pzGameObject.hpp"
-
-// std
-#include <memory>
-#include <vector>
 
 namespace pz
 {

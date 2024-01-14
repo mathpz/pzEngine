@@ -1,7 +1,7 @@
 #pragma once
 
 // pzEngine-Core
-#include "Core.hpp"
+#include "Core/Core.hpp"
 
 // std
 #include <string>

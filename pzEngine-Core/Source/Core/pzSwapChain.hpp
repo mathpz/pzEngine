@@ -1,14 +1,13 @@
 #pragma once
 
+// pre compiled header
+#include "pzpch.hpp"
+
 #include "pzDevice.hpp"
 
 // vulkan headers
 #include <vulkan/vulkan.h>
 
-// std lib headers
-#include <memory>
-#include <string>
-#include <vector>
 
 namespace pz {
 

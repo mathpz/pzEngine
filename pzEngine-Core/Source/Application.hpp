@@ -1,17 +1,13 @@
 #pragma once
 
 // pzEngine
-#include "Core.hpp"
+#include "Core/Core.hpp"
 #include "Events/Event.hpp"
 
 // #include "pzWindow.hpp"
 // #include "pzDevice.hpp"
 // #include "pzGameObject.hpp"
 // #include "pzRenderer.hpp"
-
-// std
-// #include <memory>
-// #include <vector>
 
 namespace pz
 {

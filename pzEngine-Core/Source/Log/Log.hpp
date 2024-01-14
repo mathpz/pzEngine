@@ -5,6 +5,7 @@
 
 // vendor
 #include "spdlog/spdlog.h"
+#include "spdlog/fmt/ostr.h"
 
 // std
 #include <memory>

@@ -5,7 +5,7 @@ project "First-App"
    targetdir "Binaries/%{cfg.buildcfg}"
    staticruntime "on"
 
-   files { "Source/**.h", "Source/**.cpp" }
+   files { "Source/**.hpp", "Source/**.cpp" }
 
    includedirs
    {
@@ -13,6 +13,7 @@ project "First-App"
 
 	  -- Include Core
 	  "../pzEngine-Core",
+      "../pzEngine-Core/Source",
 
       -- vendor
       "C:/msys64/mingw64/include/",
@@ -23,7 +24,8 @@ project "First-App"
     links
     {
         "pzEngine-Core",
-        "glfw3"
+        "glfw3",
+        "gdi32"
     }
 
     libdirs

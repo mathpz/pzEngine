@@ -1,7 +1,11 @@
 #include "Application.hpp"
+
+// pzEngine
+#include "Events/ApplicationEvent.hpp"
+#include "Log/Log.hpp"
 #include "simpleRenderSystem.hpp"
 
-// libs
+// GLM
 #define  GLM_FORCE_RADIANS
 #define  GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
@@ -21,6 +25,9 @@ namespace pz
 
     void Application::Run()
     {
+        WindowResizeEvent e(1280, 720);
+        PZ_TRACE(e);
+
         while(true);
         /*
         SimpleRenderSystem simpleRenderSystem{pzDevice, pzRenderer.getSwapChainRenderPass()};

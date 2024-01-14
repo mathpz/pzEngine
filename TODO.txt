@@ -8,3 +8,13 @@
 
 
 g++ -E -DPZ_PLATFORM_WINDOWS -DPZ_BUILD_DLL -DDEBUG -ISource -IShaders -IC:/msys64/mingw64/include/vulkan -IC:/msys64/mingw64/include/GLFW -m64 -g -std=c++17 -o "preprocessed_output.txt" "Source/Application.cpp"
+
+
+
+https://www.glfw.org/docs/3.3/build_guide.html
+With MinGW or Visual C++ on Windows
+The static version of the GLFW library is named glfw3. When using this version, it is also necessary to link with some libraries that GLFW uses.
+
+When using MinGW to link an application with the static version of GLFW, you must also explicitly link with gdi32. Other toolchains including MinGW-w64 include it in the set of default libraries along with other dependencies like user32 and kernel32.
+
+The link library for the GLFW DLL is named glfw3dll. When compiling an application that uses the DLL version of GLFW, you need to define the GLFW_DLL macro before any inclusion of the GLFW header. This can be done either with a compiler switch or by defining it in your source code.

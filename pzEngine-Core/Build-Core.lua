@@ -39,7 +39,8 @@ project "pzEngine-Core"
         links 
         {
             "glfw3",
-            "vulkan-1"
+            "vulkan-1",
+            "gdi32"
         }
 
         libdirs

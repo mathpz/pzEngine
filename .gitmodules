@@ -1,3 +1,6 @@
 [submodule "pzEngine-Core/vendor/spdlog"]
 	path = pzEngine-Core/vendor/spdlog
 	url = git@github.com:gabime/spdlog.git
+[submodule "pzEngine-Core/vendor/GLFW"]
+	path = pzEngine-Core/vendor/GLFW
+	url = git@github.com:mathpz/glfw.git

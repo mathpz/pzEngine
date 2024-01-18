@@ -1,37 +1,34 @@
 project "First-App"
-   kind "ConsoleApp"
-   language "C++"
-   cppdialect "C++17"
-   targetdir "Binaries/%{cfg.buildcfg}"
-   staticruntime "on"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17"
+    targetdir "Binaries/%{cfg.buildcfg}"
+    staticruntime "on"
 
-   files { "Source/**.hpp", "Source/**.cpp" }
+    files 
+    { 
+    "Source/**.hpp",
+    "Source/**.cpp",
+    "**.h",
 
-   includedirs
-   {
-      "Source",
+    }
 
-	  -- Include Core
-	  "../pzEngine-Core",
-      "../pzEngine-Core/Source",
+    includedirs
+    {
+        "Source",
 
-      -- vendor
-      "C:/msys64/mingw64/include/",
-      "../Vendor/glm",
-      "../pzEngine-Core/vendor/spdlog/include"
-   }
+        "../pzEngine-Core/Source",
+        "../pzEngine-Core/vendor/GLFW/include",
+
+        "$(VULKAN_SDK)/Include"
+    }
 
     links
     {
         "pzEngine-Core",
-        "glfw3",
-        "gdi32"
+        "GLFW",
     }
 
-    libdirs
-    {
-       "../Vendor/glfw-3.3.8.bin.WIN64/lib-mingw-w64"
-    }
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
    objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
@@ -41,18 +38,18 @@ project "First-App"
        defines { "PZ_PLATFORM_WINDOWS" }
 
    filter "configurations:Debug"
-       defines { "DEBUG" }
+       defines { "PZ_DEBUG" }
        runtime "Debug"
-       symbols "On"
+       symbols "on"
 
    filter "configurations:Release"
-       defines { "RELEASE" }
+       defines { "PZ_RELEASE" }
        runtime "Release"
-       optimize "On"
-       symbols "On"
+       optimize "on"
+       symbols "on"
 
    filter "configurations:Dist"
-       defines { "DIST" }
+       defines { "PZ_DIST" }
        runtime "Release"
-       optimize "On"
-       symbols "Off"
+       optimize "on"
+       symbols "off"

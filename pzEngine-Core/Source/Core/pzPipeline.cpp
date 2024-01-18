@@ -1,7 +1,7 @@
-#include "pzPipeline.hpp"
-
 // pre compiled header
 #include "pzpch.hpp"
+
+#include "pzPipeline.hpp"
 
 #include "pzModel.hpp"
 

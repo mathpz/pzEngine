@@ -1,7 +1,8 @@
-#include "pzSwapChain.hpp"
-
 // pre compiled header
 #include "pzpch.hpp"
+
+#include "pzSwapChain.hpp"
+
 
 namespace pz
 {
@@ -75,12 +76,12 @@ namespace pz
         1,
         &inFlightFences[currentFrame],
         VK_TRUE,
-        std::numeric_limits<uint64_t>::max());
+        (std::numeric_limits<uint64_t>::max)());
 
     VkResult result = vkAcquireNextImageKHR(
         device.device(),
         swapChain,
-        std::numeric_limits<uint64_t>::max(),
+        (std::numeric_limits<uint64_t>::max)(),
         imageAvailableSemaphores[currentFrame], // must be a not signaled semaphore
         VK_NULL_HANDLE,
         imageIndex);
@@ -435,19 +436,19 @@ namespace pz
 
   VkExtent2D PzSwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities)
   {
-    if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
+    if (capabilities.currentExtent.width != (std::numeric_limits<uint32_t>::max)())
     {
       return capabilities.currentExtent;
     }
     else
     {
       VkExtent2D actualExtent = windowExtent;
-      actualExtent.width = std::max(
+      actualExtent.width = (std::max)(
           capabilities.minImageExtent.width,
-          std::min(capabilities.maxImageExtent.width, actualExtent.width));
-      actualExtent.height = std::max(
+          (std::min)(capabilities.maxImageExtent.width, actualExtent.width));
+      actualExtent.height = (std::max)(
           capabilities.minImageExtent.height,
-          std::min(capabilities.maxImageExtent.height, actualExtent.height));
+          (std::min)(capabilities.maxImageExtent.height, actualExtent.height));
 
       return actualExtent;
     }

@@ -1,65 +1,73 @@
 project "pzEngine-Core"
-   kind "SharedLib"
-   language "C++"
-   cppdialect "C++17"
-   targetdir "Binaries/%{cfg.buildcfg}"
-   staticruntime "off"
+    kind "StaticLib"
+    language "C++"
+    cppdialect "C++17"
+    targetdir "Binaries/%{cfg.buildcfg}"
+    staticruntime "on"
 
-   pchheader "pzpch.hpp"
+    pchheader "pzpch.hpp"
    
-   files { "Source/**.hpp", "Source/**.cpp", "pzEngine.hpp" }
+    files { "Source/**.hpp", "Source/**.cpp", "**.h" }
 
-   includedirs
-   {
-        -- Include Core
-        "Source",
-        "Shaders",
-
-        -- Vendor
-        "C:/msys64/mingw64/include/",
-        "../Vendor/glm",
-        "vendor/spdlog/include"
-    }
-   
     targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
     objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
 
     GLSLC_PATH = "../Vendor/Binaries/glslc"
 
-    -- WINDOWS BUILD WITH GMAKE2
-    filter {"system:windows", "action:gmake2"}
-        prebuildcommands
-        {
-            GLSLC_PATH .. "/Windows/glslc.exe Shaders/simple_shader.vert -o Shaders/simple_shader.vert.spv", 
-            GLSLC_PATH .. "/Windows/glslc.exe Shaders/simple_shader.frag -o Shaders/simple_shader.frag.spv" 
-        
-        }
-        systemversion "latest"
-        
-        defines { "PZ_PLATFORM_WINDOWS", "PZ_BUILD_DLL" }
+    includedirs
+    {
+        "Source",
 
-        links 
-        {
-            "glfw3",
-            "vulkan-1",
-            "gdi32"
-        }
-
-        libdirs
-        {
-            "C:/msys64/mingw64/lib"
-        }
+        -- vulkan sdk
+        "$(VULKAN_SDK)/Include",
         
-        postbuildmessage ("Compiled for Windows")
-        postbuildmessage ("Copying DLLs to App")
-        
-        postbuildcommands
-        { 
-            ("cp %{cfg.buildtarget.relpath} ../Binaries/" .. OutputDir .. "/First-App/")
-        }
+        -- vendor
+        "vendor/spdlog/include",
+        "vendor/GLFW/include",
 
+        "vendor/glm/glm/**.hpp",
+        "vendor/glm/glm/**.inl"
+    }
+
+    libdirs
+    {
+        "$(VULKAN_SDK)/Lib"
+    }
+    
+    links
+    {
+        "GLFW",
+        "vulkan-1",
+    }
+
+
+    -- WINDOWS BUILD WITH VISUAL STUDIO
     filter {"system:windows", "action:vs*"}
         pchsource "Source/pzpch.cpp"
+        
+        defines
+        {
+            "PZ_PLATFORM_WINDOWS",
+            "PZ_BUILD_DLL",
+        }
+
+    filter "configurations:Debug"
+        defines { "PZ_DEBUG" }
+        runtime "Debug"
+        symbols "on"
+ 
+    filter "configurations:Release"
+        defines { "PZ_RELEASE" }
+        runtime "Release"
+        optimize "on"
+        symbols "on"
+    
+    filter "configurations:Dist"
+        defines { "PZ_DIST" }
+        runtime "Release"
+        optimize "on"
+        symbols "off"
+
 
     --  TODO COMPLETE LINUX BUILD 
     filter {"system:linux"}
@@ -67,20 +75,3 @@ project "pzEngine-Core"
         buildoptions { "-I. -I$(VULKAN_SDK_PATH)/include"}
         linkoptions { "-L$(VULKAN_SDK_PATH)/lib `pkg-config --static --libs glfw3` -lvulkan" }
         defines { }
-
-    filter "configurations:Debug"
-        defines { "DEBUG" }
-        runtime "Debug"
-        symbols "On"
- 
-    filter "configurations:Release"
-        defines { "RELEASE" }
-        runtime "Release"
-        optimize "On"
-        symbols "On"
-    
-    filter "configurations:Dist"
-        defines { "DIST" }
-        runtime "Release"
-        optimize "On"
-        symbols "Off"

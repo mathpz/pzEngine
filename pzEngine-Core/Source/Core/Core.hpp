@@ -1,12 +1,18 @@
 #pragma once
 
 // This isnt tested properly yet, so it may not work
-#ifdef PZ_WINDOWS_PLATFORM
-    #ifdef PZ_BUILD_DLL
-        #define PZ_API __attribute__((dllexport))
-    #else
-        #define PZ_API __attribute__((dllimport))
-    #endif
+#ifdef PZ_PLATFORM_WINDOWS
+	#if PZ_DYNAMIC_LINK
+		#ifdef PZ_BUILD_DLL
+			#define PZ_API __declspec(dllexport)
+		#else
+			#define PZ_API __declspec(dllimport)
+		#endif
+	#else
+		#define PZ_API
+	#endif
+#else
+    #error PZ only supports Windows!
 #endif
-    # define PZ_API
+
 #define BIT(x) (1 << x)

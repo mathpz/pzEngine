@@ -1,9 +1,8 @@
 #pragma once
 
 // For use by pzEngine applications
-#include "Source/Application.hpp"
-#include "Log/Log.hpp"
+#include "Application.hpp"
 
 // ------------Entry Point------------
-#include "Source/Core/EntryPoint.hpp"
+#include "Core/EntryPoint.hpp"
 // -----------------------------------

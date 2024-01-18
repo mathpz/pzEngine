@@ -1,7 +1,8 @@
-#include "pzWindow.hpp"
-
 // pre compiled header
 #include "pzpch.hpp"
+
+#include "pzWindow.hpp"
+
 
 namespace pz
 {

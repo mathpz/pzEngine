@@ -6,10 +6,6 @@ extern pz::Application* pz::createApplication();
 
 int main(int argc, char** argv)
 {
-    pz::Log::Init();
-    PZ_CORE_WARN("Initialized Engine Log!");
-    int a = 5;
-    PZ_INFO("Initialized Client Log!}");
 
     auto app = pz::createApplication();
     app->Run();

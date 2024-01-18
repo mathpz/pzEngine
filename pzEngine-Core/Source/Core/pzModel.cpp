@@ -1,4 +1,7 @@
+#include "pzpch.hpp"
+
 #include "pzModel.hpp"
+
 
 namespace pz
 {

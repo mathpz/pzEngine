@@ -23,10 +23,10 @@ struct QueueFamilyIndices {
 
 class PzDevice {
  public:
-#ifdef NDEBUG
-  const bool enableValidationLayers = false;
-#else
+#ifdef PZ_DEBUG
   const bool enableValidationLayers = true;
+#else
+  const bool enableValidationLayers = false;
 #endif
 
   PzDevice(PzWindow &window);

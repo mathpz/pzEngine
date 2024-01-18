@@ -1,8 +1,5 @@
 #pragma once
 
-// pre compiled header
-#include "pzpch.hpp"
-
 #include "pzDevice.hpp"
 
 // vulkan headers

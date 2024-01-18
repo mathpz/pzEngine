@@ -1,6 +1,7 @@
+#include "pzpch.hpp"
+
 #include "pzDevice.hpp"
 
-#include "pzpch.hpp"
 
 namespace pz {
 

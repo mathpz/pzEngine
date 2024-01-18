@@ -17,21 +17,21 @@ namespace pz
         Application();
         virtual ~Application();
 
-     //   static constexpr int WIDTH = 800;
-     //   static constexpr int HEIGHT = 600;
-     //
-     //   Application(const Application&) = delete;
-     //   Application &operator=(const Application&) = delete;
+        static constexpr int WIDTH = 800;
+        static constexpr int HEIGHT = 600;
+     
+        Application(const Application&) = delete;
+        Application &operator=(const Application&) = delete;
 
         void Run();
 
     private:
-     //   void loadGameObjects();
-     //
-     //   PzWindow pzWindow{WIDTH, HEIGHT, "pzEngine"};
-     //   PzDevice pzDevice{pzWindow};
-     //   PzRenderer pzRenderer{pzWindow, pzDevice};
-     //   std::vector<PzGameObject> gameObjects;
+        void loadGameObjects();
+     
+        PzWindow pzWindow{WIDTH, HEIGHT, "pzEngine"};
+        PzDevice pzDevice{pzWindow};
+        PzRenderer pzRenderer{pzWindow, pzDevice};
+        std::vector<PzGameObject> gameObjects;
 
     };
     

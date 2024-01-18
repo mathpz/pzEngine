@@ -18,7 +18,7 @@ struct QueueFamilyIndices {
   uint32_t presentFamily;
   bool graphicsFamilyHasValue = false;
   bool presentFamilyHasValue = false;
-  bool isComplete() { return graphicsFamilyHasValue && presentFamilyHasValue; }
+  bool isComplete() const { return graphicsFamilyHasValue && presentFamilyHasValue; }
 };
 
 class PzDevice {
@@ -38,11 +38,11 @@ class PzDevice {
   PzDevice(PzDevice &&) = delete;
   PzDevice &operator=(PzDevice &&) = delete;
 
-  VkCommandPool getCommandPool() { return commandPool; }
-  VkDevice device() { return device_; }
-  VkSurfaceKHR surface() { return surface_; }
-  VkQueue graphicsQueue() { return graphicsQueue_; }
-  VkQueue presentQueue() { return presentQueue_; }
+  VkCommandPool getCommandPool() const { return commandPool; }
+  VkDevice device() const { return device_; }
+  VkSurfaceKHR surface() const { return surface_; }
+  VkQueue graphicsQueue() const { return graphicsQueue_; }
+  VkQueue presentQueue() const { return presentQueue_; }
 
   SwapChainSupportDetails getSwapChainSupport() { return querySwapChainSupport(physicalDevice); }
   uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
@@ -81,7 +81,7 @@ class PzDevice {
 
   // helper functions
   bool isDeviceSuitable(VkPhysicalDevice device);
-  std::vector<const char *> getRequiredExtensions();
+  std::vector<const char *> getRequiredExtensions() const;
   bool checkValidationLayerSupport();
   QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
   void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo);

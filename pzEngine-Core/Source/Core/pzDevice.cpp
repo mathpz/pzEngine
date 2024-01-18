@@ -257,7 +257,7 @@ bool PzDevice::checkValidationLayerSupport() {
   return true;
 }
 
-std::vector<const char *> PzDevice::getRequiredExtensions() {
+std::vector<const char *> PzDevice::getRequiredExtensions() const {
   uint32_t glfwExtensionCount = 0;
   const char **glfwExtensions;
   glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);

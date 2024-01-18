@@ -17,7 +17,7 @@
 /Binaries
 /Vendor
 .vscode
-
+.vs/
 
 # Files #
 ###################
@@ -30,3 +30,18 @@ first_app.hpp
 App/Makefile
 pzEngine-Core/Makefile
 main.cpp
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+.vs/pzEngine/FileContentIndex/9a5a4201-3309-4dfd-aaa1-6a7ef7f8e21b.vsidx
+.vs/pzEngine/FileContentIndex/46a7c10e-ba40-468c-9a21-4aaaf2bf77dd.vsidx
+.vs/pzEngine/FileContentIndex/72f74d68-4960-480a-a000-16dfa01443bc.vsidx
+.vs/pzEngine/FileContentIndex/b392e959-9a9f-4e9f-9051-178ce9134bf6.vsidx
+.vs/pzEngine/FileContentIndex/e9978090-d63b-481e-98e6-e4e79e4933b6.vsidx
+.vs/pzEngine/v17/.suo
+.vs/pzEngine/v17/Browse.VC.db
+.vs/pzEngine/v17/fileList.bin
+.vs/pzEngine/v17/Solution.VC.db
+.vs/pzEngine/v17/Solution.VC.db-shm
+.vs/pzEngine/v17/Solution.VC.db-wal
+.vs/pzEngine/v17/ipch/68b0831650dc708c.ipch
+.vs/pzEngine/v17/ipch/AutoPCH/1fc975742a2938ac/APPLICATION.ipch

@@ -12,7 +12,7 @@ project "pzEngine-Core"
     targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
     objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
 
-    GLSLC_PATH = "../Vendor/Binaries/glslc"
+    GLSLC_PATH = "..\\Vendor\\Binaries\\glslc"
 
     includedirs
     {
@@ -22,7 +22,6 @@ project "pzEngine-Core"
         "$(VULKAN_SDK)/Include",
         
         -- vendor
-        "vendor/spdlog/include",
         "vendor/GLFW/include",
 
         "vendor/glm/glm/**.hpp",
@@ -45,6 +44,13 @@ project "pzEngine-Core"
     filter {"system:windows", "action:vs*"}
         pchsource "Source/pzpch.cpp"
         
+        prebuildcommands 
+        { 
+            GLSLC_PATH .. "\\Windows\\glslc.exe Shaders\\simple_shader.vert -o Shaders\\simple_shader.vert.spv", 
+            GLSLC_PATH .. "\\Windows\\glslc.exe Shaders\\simple_shader.frag -o Shaders\\simple_shader.frag.spv" 
+        
+        }
+
         defines
         {
             "PZ_PLATFORM_WINDOWS",

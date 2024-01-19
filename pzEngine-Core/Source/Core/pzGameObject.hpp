@@ -1,26 +1,34 @@
 #pragma once
 
+// pre compiled header
+#include "pzpch.hpp"
+
+// pzEngine
 #include "pzModel.hpp"
 
-#include "pzpch.hpp"
+// glm
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 namespace pz
 {
-    struct Transform2dComponent
+    struct TransformComponent
     {
-        glm::vec2 translation{};  // position offset
-        glm::vec2 scale{1.f, 1.f};    // scale
-        float rotation;
+        glm::vec3 translation{};  // position offset
+        glm::vec3 scale{ 1.f, 1.f, 1.f };    // scale
+        glm::quat rotation{ 1.0f, 0.0f, 0.0f, 0.0f };  // Quaternion for rotation
 
-        glm::mat2 mat2() 
+        glm::mat4 mat4()
         {
-            const float sin = std::sin(rotation);
-            const float cos = std::cos(rotation);
-            glm::mat2 rotationMat{{cos, sin}, {-sin, cos}};
+            glm::mat4 transform = glm::translate(glm::mat4(1.0f), translation);
 
-            glm::mat2 scaleMat{{scale.x, 0.0f}, {0.0f, scale.y}};
-            return rotationMat * scaleMat; 
+            // Apply rotation using quaternion
+            transform *= glm::mat4_cast(rotation);
+
+            transform = glm::scale(transform, scale);
+            return transform;
         }
+    
     };
 
 
@@ -44,7 +52,7 @@ namespace pz
 
             std::shared_ptr<PzModel> model{};
             glm::vec3 color{};
-            Transform2dComponent transform2d{};
+            TransformComponent transform{};
 
         private:
             PzGameObject(id_t objId) : id{objId} {}

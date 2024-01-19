@@ -7,7 +7,7 @@ project "pzEngine-Core"
 
     pchheader "pzpch.hpp"
    
-    files { "Source/**.hpp", "Source/**.cpp", "**.h" }
+    files { "Source/**.hpp", "Source/**.cpp", "**.h", "**.vert", "**.frag"}
 
     targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
     objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
@@ -17,6 +17,7 @@ project "pzEngine-Core"
     includedirs
     {
         "Source",
+        "Shaders",
 
         -- vulkan sdk
         "$(VULKAN_SDK)/Include",

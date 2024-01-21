@@ -63,6 +63,8 @@ namespace pz
     void SimpleRenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<PzGameObject>& gameObjects, const PzCamera& camera)
     {
         pzPipeline->bind(commandBuffer);
+        auto projectionView = camera.getProjectionMatrix() * camera.getView();
+
 
         for (auto &obj : gameObjects)
         {
@@ -71,7 +73,7 @@ namespace pz
             
             SimplePushConstantsData push{};
             push.color = obj.color;
-            push.transform = camera.getProjectionMatrix() * obj.transform.mat4();   // Temporary, send both to vertex shaders
+            push.transform = projectionView * obj.transform.mat4();   // Temporary, send both to vertex shaders
 
             vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantsData), &push);
             obj.model->bind(commandBuffer);

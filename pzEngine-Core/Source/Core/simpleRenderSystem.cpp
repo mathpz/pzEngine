@@ -60,7 +60,7 @@ namespace pz
         pzPipeline = std::make_unique<PzPipeline>(pzDevice, "F:/programmingProjects/pzEngine/pzEngine-Core/Shaders/simple_shader.vert.spv", "F:/programmingProjects/pzEngine/pzEngine-Core/Shaders/simple_shader.frag.spv", pipelineConfig);
     }   // TODO : change absolute path to relative
 
-    void SimpleRenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<PzGameObject>& gameObjects)
+    void SimpleRenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<PzGameObject>& gameObjects, const PzCamera& camera)
     {
         pzPipeline->bind(commandBuffer);
 
@@ -71,7 +71,7 @@ namespace pz
             
             SimplePushConstantsData push{};
             push.color = obj.color;
-            push.transform = obj.transform.mat4();
+            push.transform = camera.getProjectionMatrix() * obj.transform.mat4();   // Temporary, send both to vertex shaders
 
             vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantsData), &push);
             obj.model->bind(commandBuffer);

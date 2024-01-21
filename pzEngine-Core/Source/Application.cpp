@@ -5,6 +5,7 @@
 
 // pzEngine
 #include "Core/simpleRenderSystem.hpp"
+#include "Core/pzCamera.hpp"
 
 // GLM
 #define  GLM_FORCE_RADIANS
@@ -26,13 +27,19 @@ namespace pz
 
     void Application::Run() {
         SimpleRenderSystem simpleRenderSystem{ pzDevice, pzRenderer.getSwapChainRenderPass() };
+        PzCamera camera{};
+        
 
         while (!pzWindow.shouldClose()) {
             glfwPollEvents();
 
+            float aspectRatio = pzRenderer.getAspectRatio();
+            // camera.setOrthograpichProjection(-aspectRatio, aspectRatio, -1, 1, -1, 1);
+            camera.setPerspectiveProjection(glm::radians(50.f), aspectRatio, 0.1f, 10.f);
+
             if (auto commandBuffer = pzRenderer.beginFrame()) {
                 pzRenderer.beginSwapChainRenderPass(commandBuffer);
-                simpleRenderSystem.renderGameObjects(commandBuffer, gameObjects);
+                simpleRenderSystem.renderGameObjects(commandBuffer, gameObjects, camera);
                 pzRenderer.endSwapChainRenderPass(commandBuffer);
                 pzRenderer.endFrame();
             }
@@ -107,7 +114,7 @@ namespace pz
 
         auto cube = PzGameObject::createGameObject();
         cube.model = model;
-        cube.transform.translation = { 0.0f, 0.0f, 0.5f };
+        cube.transform.translation = { 0.0f, 0.0f, 2.5f };
         cube.transform.scale = { .5f, .5f, .5f };
 
         gameObjects.push_back(std::move(cube));

@@ -19,6 +19,7 @@ namespace pz
             PzRenderer &operator=(const PzRenderer&) = delete;
 
             VkRenderPass getSwapChainRenderPass() const { return pzSwapChain->getRenderPass(); }
+            float getAspectRatio() const { return pzSwapChain->extentAspectRatio(); }
             bool isFrameInProgress() const { return m_isFrameStarted; }
 
             VkCommandBuffer getCurrentCommandBuffer() const 

@@ -5,6 +5,7 @@
 #include "pzPipeline.hpp"
 #include "pzDevice.hpp"
 #include "pzGameObject.hpp"
+#include "pzCamera.hpp"
 
 namespace pz
 {
@@ -17,7 +18,7 @@ namespace pz
             SimpleRenderSystem(const SimpleRenderSystem&) = delete;
             SimpleRenderSystem &operator=(const SimpleRenderSystem&) = delete;
 
-            void renderGameObjects(VkCommandBuffer commandBuffer, std::vector<PzGameObject>& gameObjects);
+            void renderGameObjects(VkCommandBuffer commandBuffer, std::vector<PzGameObject>& gameObjects, const PzCamera& camera);
 
         private:
             void createPipelineLayout();

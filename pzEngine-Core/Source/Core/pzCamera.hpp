@@ -8,12 +8,15 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 
+#undef near
+#undef far
+
 namespace pz
 {
 	class PzCamera
 	{
 	public:
-		void setOrthograpichProjection(float leftPlane, float rightPlane, float topPlane, float bottomPlane, float nearPlane, float farPlane);
+		void setOrthographicProjection(float left, float right, float top, float bottom, float near, float far);
 
 		void setPerspectiveProjection(float fovY, float aspectRatio, float nearPlane, float farPlane);
 

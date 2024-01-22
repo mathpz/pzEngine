@@ -6,6 +6,7 @@
 // pzEngine
 #include "Core/simpleRenderSystem.hpp"
 #include "Core/pzCamera.hpp"
+#include "Core/IO/keyboard_controller.hpp"
 
 // GLM
 #define  GLM_FORCE_RADIANS
@@ -29,13 +30,28 @@ namespace pz
         SimpleRenderSystem simpleRenderSystem{ pzDevice, pzRenderer.getSwapChainRenderPass() };
         PzCamera camera{};
         // camera.setViewDirection(glm::vec3(0.f), glm::vec3(0.5f, 0.f, 1.f));
-        camera.setViewTarget(glm::vec3(-1.f, -2.f, 2.f), glm::vec3(0.f, 0.f, 2.5f));
+        //camera.setViewTarget(glm::vec3(-1.f, -2.f, 2.f), glm::vec3(0.f, 0.f, 2.5f));
+
+        auto viewerObject = PzGameObject::createGameObject();
+        KeyboardMovementController cameraController{};
+
+        auto currentTime = std::chrono::high_resolution_clock::now();
 
         while (!pzWindow.shouldClose()) {
             glfwPollEvents();
 
+            auto newTime = std::chrono::high_resolution_clock::now();
+            float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
+            currentTime = newTime;
+
+            // frameTime = glm::min(frameTime, MAX_FRAME_TIME);
+
+            cameraController.moveInPlaneXZ(pzWindow.getGLFWwindow(), frameTime, viewerObject);
+            camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
+
+
             float aspectRatio = pzRenderer.getAspectRatio();
-            // camera.setOrthograpichProjection(-aspectRatio, aspectRatio, -1, 1, -1, 1);
+
             camera.setPerspectiveProjection(glm::radians(50.f), aspectRatio, 0.1f, 10.f);
 
             if (auto commandBuffer = pzRenderer.beginFrame()) {

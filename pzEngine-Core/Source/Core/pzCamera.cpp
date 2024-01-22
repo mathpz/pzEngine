@@ -3,34 +3,33 @@
 
 #include "pzCamera.hpp"
 
+#undef near
+#undef far
+
 namespace pz
 {
-	void PzCamera::setOrthograpichProjection(
-		float left, float right, float top, float bottom, float nearPlane, float farPlane) 
-	{
+	void PzCamera::setOrthographicProjection(float left, float right, float top, float bottom, float near, float far) {
 		m_projectionMatrix = glm::mat4{ 1.0f };
 		m_projectionMatrix[0][0] = 2.f / (right - left);
 		m_projectionMatrix[1][1] = 2.f / (bottom - top);
-		m_projectionMatrix[2][2] = 1.f / (farPlane - nearPlane);
+		m_projectionMatrix[2][2] = 1.f / (far - near);
 		m_projectionMatrix[3][0] = -(right + left) / (right - left);
 		m_projectionMatrix[3][1] = -(bottom + top) / (bottom - top);
-		m_projectionMatrix[3][2] = -nearPlane / (farPlane - nearPlane);
+		m_projectionMatrix[3][2] = -near / (far - near);
 	}
 
-	void PzCamera::setPerspectiveProjection(float fovY, float aspectRatio, float nearPlane, float farPlane) 
-	{
-		assert(glm::abs(aspectRatio - std::numeric_limits<float>::epsilon()) > 0.0f);
-		const float tanHalfFovy = tan(fovY / 2.f);
+	void PzCamera::setPerspectiveProjection(float fovy, float aspect, float near, float far) {
+		assert(glm::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
+		const float tanHalfFovy = tan(fovy / 2.f);
 		m_projectionMatrix = glm::mat4{ 0.0f };
-		m_projectionMatrix[0][0] = 1.f / (aspectRatio * tanHalfFovy);
+		m_projectionMatrix[0][0] = 1.f / (aspect * tanHalfFovy);
 		m_projectionMatrix[1][1] = 1.f / (tanHalfFovy);
-		m_projectionMatrix[2][2] = farPlane / (farPlane - nearPlane);
+		m_projectionMatrix[2][2] = far / (far - near);
 		m_projectionMatrix[2][3] = 1.f;
-		m_projectionMatrix[3][2] = -(farPlane * nearPlane) / (farPlane - nearPlane);
+		m_projectionMatrix[3][2] = -(far * near) / (far - near);
 	}
 
 	void PzCamera::setViewDirection(glm::vec3 position, glm::vec3 direction, glm::vec3 up) {
-		// orthonormal basis
 		const glm::vec3 w{ glm::normalize(direction) };
 		const glm::vec3 u{ glm::normalize(glm::cross(w, up)) };
 		const glm::vec3 v{ glm::cross(w, u) };
@@ -54,8 +53,7 @@ namespace pz
 		setViewDirection(position, target - position, up);
 	}
 
-	void PzCamera::setViewYXZ(glm::vec3 position, glm::vec3 rotation) 
-	{
+	void PzCamera::setViewYXZ(glm::vec3 position, glm::vec3 rotation) {
 		const float c3 = glm::cos(rotation.z);
 		const float s3 = glm::sin(rotation.z);
 		const float c2 = glm::cos(rotation.x);

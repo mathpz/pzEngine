@@ -9,6 +9,7 @@
 #include <fstream>
 #include <limits>
 #include <cstdlib>
+#include <chrono>
 
 // C Standard Library includes
 #include <string>

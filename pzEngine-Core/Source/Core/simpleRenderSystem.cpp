@@ -68,8 +68,8 @@ namespace pz
 
         for (auto &obj : gameObjects)
         {
-            obj.transform.rotation = glm::rotate(obj.transform.rotation, 0.01f, glm::vec3(0.0f, 1.0f, 0.0f));
-            obj.transform.rotation = glm::rotate(obj.transform.rotation, 0.005f, glm::vec3(1.0f, 0.0f, 0.0f));
+            // obj.transform.rotation = glm::rotate(obj.transform.rotation, 0.01f, glm::vec3(0.0f, 1.0f, 0.0f));
+            // obj.transform.rotation = glm::rotate(obj.transform.rotation, 0.005f, glm::vec3(1.0f, 0.0f, 0.0f));
             
             SimplePushConstantsData push{};
             push.color = obj.color;

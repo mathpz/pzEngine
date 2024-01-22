@@ -3,5 +3,6 @@
 -- Change Game Object to Entity Component System 
 -- Write a proper README.md
 -- set spdlog properly again
+-- create a decent controllar that can be remapped on runtime
 -- log window and mouse and key movements in the screen
 -- make a more intuitive TransformComponent, mostly abstracting quaternions

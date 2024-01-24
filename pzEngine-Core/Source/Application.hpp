@@ -2,7 +2,7 @@
 
 // pzEngine
 #include "Core/Core.hpp"
-#include "Events/Event.hpp"
+#include "Core/Events/Event.hpp"
 
 #include "Core/pzWindow.hpp"
 #include "Core/pzDevice.hpp"

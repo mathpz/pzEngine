@@ -8,6 +8,7 @@ workspace "pzEngine"
 
 group "Dependencies"
    include "pzEngine-Core/vendor/GLFW"
+   include "pzEngine-Core/vendor/imgui"
 group ""
 
 group "Core"

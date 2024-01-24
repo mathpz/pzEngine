@@ -26,7 +26,9 @@ project "pzEngine-Core"
         "vendor/GLFW/include",
 
         "vendor/glm/glm/**.hpp",
-        "vendor/glm/glm/**.inl"
+        "vendor/glm/glm/**.inl",
+
+        "vendor/imgui",
     }
 
     libdirs
@@ -38,6 +40,7 @@ project "pzEngine-Core"
     {
         "GLFW",
         "vulkan-1",
+        "ImGui"
     }
 
 

@@ -16,8 +16,7 @@ namespace pz
     struct SimplePushConstantsData
     {
         glm::mat4 transform{1.f};
-        glm::quat rotation{ 1.0f, 0.0f, 0.0f, 0.0f };  // Quaternion for rotation
-        alignas(16) glm::vec3 color;
+        glm::mat4 normalMatrix{1.f};
     };
 
     SimpleRenderSystem::SimpleRenderSystem(PzDevice& pzDevice, VkRenderPass renderPass)
@@ -68,12 +67,12 @@ namespace pz
 
         for (auto &obj : gameObjects)
         {
-            // obj.transform.rotation = glm::rotate(obj.transform.rotation, 0.01f, glm::vec3(0.0f, 1.0f, 0.0f));
-            // obj.transform.rotation = glm::rotate(obj.transform.rotation, 0.005f, glm::vec3(1.0f, 0.0f, 0.0f));
-            
             SimplePushConstantsData push{};
-            push.color = obj.color;
-            push.transform = projectionView * obj.transform.mat4();   // Temporary, send both to vertex shaders
+            auto modelMatrix = obj.transform.mat4();
+            
+            push.transform = projectionView * modelMatrix;   // Temporary, send both to vertex shaders
+            push.normalMatrix = obj.transform.normalMatrix();
+
 
             vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantsData), &push);
             obj.model->bind(commandBuffer);

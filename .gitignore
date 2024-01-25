@@ -18,6 +18,7 @@
 /Vendor
 .vscode
 .vs/
+pzEngine-Core/models
 
 # Files #
 ###################

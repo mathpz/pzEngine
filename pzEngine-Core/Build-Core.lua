@@ -29,6 +29,7 @@ project "pzEngine-Core"
         "vendor/glm/glm/**.inl",
 
         "vendor/imgui",
+        "vendor/tinyobjloader/tiny_obj_loader.h"
     }
 
     libdirs

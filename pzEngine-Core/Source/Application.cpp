@@ -27,10 +27,20 @@ namespace pz
     }
 
     void Application::Run() {
+        std::vector<std::unique_ptr<PzBuffer>> uboBuffers{ PzSwapChain::MAX_FRAMES_IN_FLIGHT };
+        for (int i = 0; i < uboBuffers.size(); i++)
+        {
+            uboBuffers[i] = std::make_unique<PzBuffer>(
+                pzDevice,
+                sizeof(GlobalUbo),
+                1,
+                VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT );
+            uboBuffers[i]->map();
+        }
+
         SimpleRenderSystem simpleRenderSystem{ pzDevice, pzRenderer.getSwapChainRenderPass() };
         PzCamera camera{};
-        // camera.setViewDirection(glm::vec3(0.f), glm::vec3(0.5f, 0.f, 1.f));
-        //camera.setViewTarget(glm::vec3(-1.f, -2.f, 2.f), glm::vec3(0.f, 0.f, 2.5f));
 
         auto viewerObject = PzGameObject::createGameObject();
         KeyboardMovementController cameraController{};
@@ -55,8 +65,18 @@ namespace pz
             camera.setPerspectiveProjection(glm::radians(50.f), aspectRatio, 0.1f, 10.f);
 
             if (auto commandBuffer = pzRenderer.beginFrame()) {
+                int frameIndex = pzRenderer.getFrameIndex();
+                FrameInfo frameInfo{ frameIndex, frameTime, commandBuffer, camera};
+
+                // update
+                GlobalUbo ubo{};
+                ubo.projectionView = camera.getProjectionMatrix() * camera.getView();
+                uboBuffers[frameIndex]->writeToBuffer(&ubo);
+                uboBuffers[frameIndex]->flush();
+
+                // render
                 pzRenderer.beginSwapChainRenderPass(commandBuffer);
-                simpleRenderSystem.renderGameObjects(commandBuffer, gameObjects, camera);
+                simpleRenderSystem.renderGameObjects(frameInfo, gameObjects);
                 pzRenderer.endSwapChainRenderPass(commandBuffer);
                 pzRenderer.endFrame();
             }

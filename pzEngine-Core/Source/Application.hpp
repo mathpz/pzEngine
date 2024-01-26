@@ -8,9 +8,16 @@
 #include "Core/pzDevice.hpp"
 #include "Core/pzGameObject.hpp"
 #include "Core/pzRenderer.hpp"
+#include "Core/pzUniformBuffer.hpp"
 
 namespace pz
 {
+    struct GlobalUbo
+    {
+        glm::mat4 projectionView{1.0f};
+        glm::vec3 lightDirection = glm::normalize( glm::vec3{1.0f, -3.0f, -1.0f} );
+	};
+
     class PZ_API Application
     {
     public:

@@ -32,14 +32,6 @@ namespace pz
 
     PzModel::~PzModel()
     {
-        vkDestroyBuffer(pzDevice.device(), vertexBuffer, nullptr);
-        vkFreeMemory(pzDevice.device(), vertexBufferMemory, nullptr);
-
-        if(hasIndexBuffer)
-		{
-			vkDestroyBuffer(pzDevice.device(), indexBuffer, nullptr);
-			vkFreeMemory(pzDevice.device(), indexBufferMemory, nullptr);
-		}
     }
 
     std::unique_ptr<PzModel> PzModel::createModelFromFile(PzDevice& pzDevice, const std::string& filepath)
@@ -57,35 +49,31 @@ namespace pz
         assert(vertexCount >= 3 && "Vertex count must be at least 3");
 
         VkDeviceSize bufferSize = sizeof(vertices[0]) * vertexCount;
+        uint32_t vertexSize = sizeof(vertices[0]);
 
-        VkBuffer staginfBuffer;
-        VkDeviceMemory stagingBufferMemory;
-
-        pzDevice.createBuffer(
-            bufferSize,
+        PzBuffer stagingBuffer
+        {
+            pzDevice,
+            vertexSize,
+            vertexCount,
             VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-            staginfBuffer,
-            stagingBufferMemory);
+        };
 
         // this maps the vertex buffer memory to the CPU | Host -> Device
-        void *data;
-        vkMapMemory(pzDevice.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-        memcpy(data, vertices.data(), (size_t) bufferSize);
-        vkUnmapMemory(pzDevice.device(), stagingBufferMemory);
+        stagingBuffer.map();
+        stagingBuffer.writeToBuffer((void*)vertices.data(), bufferSize);
 
-        pzDevice.createBuffer(
-            bufferSize,
-            VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-            vertexBuffer,
-            vertexBufferMemory);
+        vertexBuffer = std::make_unique<PzBuffer>
+        (
+			pzDevice,
+			vertexSize,
+			vertexCount,
+			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+		);
             
-        pzDevice.copyBuffer(staginfBuffer, vertexBuffer, bufferSize);
-
-        vkDestroyBuffer(pzDevice.device(), staginfBuffer, nullptr);
-        vkFreeMemory(pzDevice.device(), stagingBufferMemory, nullptr);
-    
+        pzDevice.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), bufferSize);
     }
 
     void PzModel::createIndexBuffer(const std::vector<uint32_t>& indices)
@@ -97,34 +85,30 @@ namespace pz
 			return;
 
         VkDeviceSize bufferSize = sizeof(indices[0]) * indexCount;
+        uint32_t indexSize = sizeof(indices[0]);
 
-        VkBuffer staginfBuffer;
-        VkDeviceMemory stagingBufferMemory;
-
-        pzDevice.createBuffer(
-            bufferSize,
+        PzBuffer stagingBuffer
+        {
+            pzDevice,
+            indexSize,
+            indexCount,
             VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-            staginfBuffer,
-            stagingBufferMemory);
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+		};
 
-        // this maps the index buffer memory to the CPU | Host -> Device
-        void* data;
-        vkMapMemory(pzDevice.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-        memcpy(data, indices.data(), (size_t)bufferSize);
-        vkUnmapMemory(pzDevice.device(), stagingBufferMemory);
+		stagingBuffer.map();
+		stagingBuffer.writeToBuffer((void*)indices.data(), bufferSize);
 
-        pzDevice.createBuffer(
-            bufferSize,
-            VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-            indexBuffer,
-            indexBufferMemory);
+		indexBuffer = std::make_unique<PzBuffer>
+		(
+            pzDevice,
+			indexSize,
+			indexCount,
+			VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+		);
 
-        pzDevice.copyBuffer(staginfBuffer, indexBuffer, bufferSize);
-
-        vkDestroyBuffer(pzDevice.device(), staginfBuffer, nullptr);
-        vkFreeMemory(pzDevice.device(), stagingBufferMemory, nullptr);
+        pzDevice.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), bufferSize);
     }
 
     void PzModel::draw(VkCommandBuffer commandBuffer)
@@ -141,13 +125,13 @@ namespace pz
 
     void PzModel::bind(VkCommandBuffer commandBuffer)
     {
-        VkBuffer buffers[] = {vertexBuffer};
+        VkBuffer buffers[] = {vertexBuffer->getBuffer()};
         VkDeviceSize offsets[] = {0};
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
         
         if (hasIndexBuffer)
         {
-            vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+            vkCmdBindIndexBuffer(commandBuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
         }
 
     }

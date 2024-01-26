@@ -59,10 +59,10 @@ namespace pz
         pzPipeline = std::make_unique<PzPipeline>(pzDevice, "F:/programmingProjects/pzEngine/pzEngine-Core/Shaders/simple_shader.vert.spv", "F:/programmingProjects/pzEngine/pzEngine-Core/Shaders/simple_shader.frag.spv", pipelineConfig);
     }   // TODO : change absolute path to relative
 
-    void SimpleRenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<PzGameObject>& gameObjects, const PzCamera& camera)
+    void SimpleRenderSystem::renderGameObjects(FrameInfo &frameInfo, std::vector<PzGameObject>& gameObjects)
     {
-        pzPipeline->bind(commandBuffer);
-        auto projectionView = camera.getProjectionMatrix() * camera.getView();
+        pzPipeline->bind(frameInfo.commandBuffer);
+        auto projectionView = frameInfo.camera.getProjectionMatrix() * frameInfo.camera.getView();
 
 
         for (auto &obj : gameObjects)
@@ -74,9 +74,9 @@ namespace pz
             push.normalMatrix = obj.transform.normalMatrix();
 
 
-            vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantsData), &push);
-            obj.model->bind(commandBuffer);
-            obj.model->draw(commandBuffer);
+            vkCmdPushConstants(frameInfo.commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantsData), &push);
+            obj.model->bind(frameInfo.commandBuffer);
+            obj.model->draw(frameInfo.commandBuffer);
         }
     }
 

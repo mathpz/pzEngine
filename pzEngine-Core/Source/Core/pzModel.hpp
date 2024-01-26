@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pzDevice.hpp"
+#include "pzUniformBuffer.hpp"
 
 // libs
 #define  GLM_FORCE_RADIANS
@@ -54,13 +55,11 @@ namespace pz
 
             PzDevice &pzDevice;
 
-            VkBuffer vertexBuffer;
-            VkDeviceMemory vertexBufferMemory;
+            std::unique_ptr<PzBuffer> vertexBuffer;
             uint32_t vertexCount;
 
             bool hasIndexBuffer = false;
-            VkBuffer indexBuffer;
-            VkDeviceMemory indexBufferMemory;
+            std::unique_ptr<PzBuffer> indexBuffer;
             uint32_t indexCount;
     };
 

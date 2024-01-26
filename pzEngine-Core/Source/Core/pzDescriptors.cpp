@@ -192,7 +192,7 @@ namespace pz {
         for (auto& write : writes) {
             write.dstSet = set;
         }
-        vkUpdateDescriptorSets(pool.pzDevice.device(), writes.size(), writes.data(), 0, nullptr);
+        vkUpdateDescriptorSets(pool.pzDevice.device(), static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
     }
 
 }  // namespace pz

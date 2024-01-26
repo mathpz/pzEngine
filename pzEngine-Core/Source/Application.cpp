@@ -20,7 +20,10 @@ namespace pz
     struct GlobalUbo
     {
         glm::mat4 projectionView{ 1.0f };
-        glm::vec3 lightDirection = glm::normalize(glm::vec3{ 1.0f, -3.0f, -1.0f });
+        glm::vec4 ambientLightColor{1.f, 1.f, 1.f, .02f};  // w is intensity
+        glm::vec3 lightPosition{ -1.f };
+        alignas (16) glm::vec4 lightColor{ 1.f, 1.f, 1.f, 1.f };
+
     };
 
     Application::Application()
@@ -66,6 +69,7 @@ namespace pz
         PzCamera camera{};
 
         auto viewerObject = PzGameObject::createGameObject();
+        viewerObject.transform.translation.z = -2.5f;
         KeyboardMovementController cameraController{};
 
         auto currentTime = std::chrono::high_resolution_clock::now();
@@ -85,7 +89,7 @@ namespace pz
 
             float aspectRatio = pzRenderer.getAspectRatio();
 
-            camera.setPerspectiveProjection(glm::radians(50.f), aspectRatio, 0.1f, 10.f);
+            camera.setPerspectiveProjection(glm::radians(50.f), aspectRatio, 0.1f, 100.f);
 
             if (auto commandBuffer = pzRenderer.beginFrame()) {
                 int frameIndex = pzRenderer.getFrameIndex();
@@ -110,14 +114,28 @@ namespace pz
 
 
     void Application::loadGameObjects() {
-        std::shared_ptr<PzModel> model = PzModel::createModelFromFile(pzDevice, "F:\\programmingProjects\\pzEngine\\pzEngine-Core\\models\\smooth_vase.obj");
+        std::shared_ptr<PzModel> model = PzModel::createModelFromFile(pzDevice, "F:\\programmingProjects\\pzEngine\\pzEngine-Core\\models\\flat_vase.obj");
 
-        auto gameObject = PzGameObject::createGameObject();
-        gameObject.model = model;
-        gameObject.transform.translation = { 0.0f, 0.0f, 2.5f };
-        gameObject.transform.scale = glm::vec3(3.f);
+        auto flatVase = PzGameObject::createGameObject();
+        flatVase.model = model;
+        flatVase.transform.translation = { -.5f, 0.5f, 0.f };
+        flatVase.transform.scale = { 3.f, 1.5f, 3.f };
+        gameObjects.push_back(std::move(flatVase));
 
-        gameObjects.push_back(std::move(gameObject));
+
+        model = PzModel::createModelFromFile(pzDevice, "F:\\programmingProjects\\pzEngine\\pzEngine-Core\\models\\smooth_vase.obj");
+        auto smoothVase = PzGameObject::createGameObject();
+        smoothVase.model = model;
+        smoothVase.transform.translation = { .5f, 0.5f, 0.f };
+        smoothVase.transform.scale = { 3.f, 1.5f, 3.f };
+        gameObjects.push_back(std::move(smoothVase));
+
+        model = PzModel::createModelFromFile(pzDevice, "F:\\programmingProjects\\pzEngine\\pzEngine-Core\\models\\quad.obj");
+        auto floor = PzGameObject::createGameObject();
+        floor.model = model;
+        floor.transform.translation = { 0.f, 0.5f, 0.f };
+        floor.transform.scale = { 3.f, 1.f, 3.f };
+        gameObjects.push_back(std::move(floor));
     }
 
 } // namespace pz

@@ -13,7 +13,7 @@ namespace pz
     class SimpleRenderSystem
     {
         public:
-            SimpleRenderSystem(PzDevice& pzDevice, VkRenderPass renderPass);
+            SimpleRenderSystem(PzDevice& pzDevice, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
             ~SimpleRenderSystem();
 
             SimpleRenderSystem(const SimpleRenderSystem&) = delete;
@@ -22,7 +22,7 @@ namespace pz
             void renderGameObjects(FrameInfo &frameInfo, std::vector<PzGameObject>& gameObjects);
 
         private:
-            void createPipelineLayout();
+            void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
             void createPipeline(VkRenderPass renderPass);
 
             PzDevice& pzDevice;

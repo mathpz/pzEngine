@@ -17,9 +17,19 @@
 
 namespace pz
 {
+    struct GlobalUbo
+    {
+        glm::mat4 projectionView{ 1.0f };
+        glm::vec3 lightDirection = glm::normalize(glm::vec3{ 1.0f, -3.0f, -1.0f });
+    };
+
     Application::Application()
     {
-         loadGameObjects();
+        globalPool = PzDescriptorPool::Builder(pzDevice)
+            .setMaxSets(PzSwapChain::MAX_FRAMES_IN_FLIGHT)
+			.addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, PzSwapChain::MAX_FRAMES_IN_FLIGHT)
+			.build();
+        loadGameObjects();
     }
 
     Application::~Application()
@@ -39,7 +49,20 @@ namespace pz
             uboBuffers[i]->map();
         }
 
-        SimpleRenderSystem simpleRenderSystem{ pzDevice, pzRenderer.getSwapChainRenderPass() };
+        auto globalSetLayout = PzDescriptorSetLayout::Builder(pzDevice)
+			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+			.build();
+
+        std::vector<VkDescriptorSet> globlaDescriptorSets{ PzSwapChain::MAX_FRAMES_IN_FLIGHT };
+        for (int i = 0; i < globlaDescriptorSets.size(); i++)
+        {
+            auto bufferInfo = uboBuffers[i]->descriptorInfo();
+            PzDescriptorWriter(*globalSetLayout, *globalPool)
+                .writeBuffer(0, &bufferInfo)
+                .build(globlaDescriptorSets[i]);
+        }
+
+        SimpleRenderSystem simpleRenderSystem{ pzDevice, pzRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
         PzCamera camera{};
 
         auto viewerObject = PzGameObject::createGameObject();
@@ -66,7 +89,7 @@ namespace pz
 
             if (auto commandBuffer = pzRenderer.beginFrame()) {
                 int frameIndex = pzRenderer.getFrameIndex();
-                FrameInfo frameInfo{ frameIndex, frameTime, commandBuffer, camera};
+                FrameInfo frameInfo{ frameIndex, frameTime, commandBuffer, camera, globlaDescriptorSets[frameIndex]};
 
                 // update
                 GlobalUbo ubo{};

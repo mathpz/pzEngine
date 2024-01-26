@@ -12,5 +12,6 @@ namespace pz
 		float frameTime;
 		VkCommandBuffer commandBuffer;
 		PzCamera& camera;
+		VkDescriptorSet globalDescriptorSet;
 	};
 } // namespace pz

@@ -9,14 +9,10 @@
 #include "Core/pzGameObject.hpp"
 #include "Core/pzRenderer.hpp"
 #include "Core/pzUniformBuffer.hpp"
+#include "Core/pzDescriptors.hpp"
 
 namespace pz
 {
-    struct GlobalUbo
-    {
-        glm::mat4 projectionView{1.0f};
-        glm::vec3 lightDirection = glm::normalize( glm::vec3{1.0f, -3.0f, -1.0f} );
-	};
 
     class PZ_API Application
     {
@@ -38,6 +34,9 @@ namespace pz
         PzWindow pzWindow{WIDTH, HEIGHT, "pzEngine"};
         PzDevice pzDevice{pzWindow};
         PzRenderer pzRenderer{pzWindow, pzDevice};
+
+        // note: order of declarations matters
+        std::unique_ptr<PzDescriptorPool> globalPool{};
         std::vector<PzGameObject> gameObjects;
 
     };

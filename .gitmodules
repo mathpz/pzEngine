@@ -7,9 +7,6 @@
 [submodule "pzEngine-Core/vendor/glm"]
 	path = pzEngine-Core/vendor/glm
 	url = git@github.com:g-truc/glm.git
-[submodule "pzEngine-Core/vendor/imgui"]
-	path = pzEngine-Core/vendor/imgui
-	url = git@github.com:mathpz/imgui.git
 [submodule "pzEngine-Core/vendor/tinyobjloader"]
 	path = pzEngine-Core/vendor/tinyobjloader
 	url = git@github.com:tinyobjloader/tinyobjloader.git

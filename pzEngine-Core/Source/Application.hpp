@@ -37,7 +37,7 @@ namespace pz
 
         // note: order of declarations matters
         std::unique_ptr<PzDescriptorPool> globalPool{};
-        std::vector<PzGameObject> gameObjects;
+        PzGameObject::Map gameObjects;
 
     };
     

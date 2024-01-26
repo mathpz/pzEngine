@@ -61,7 +61,7 @@ namespace pz
         pzPipeline = std::make_unique<PzPipeline>(pzDevice, "F:/programmingProjects/pzEngine/pzEngine-Core/Shaders/simple_shader.vert.spv", "F:/programmingProjects/pzEngine/pzEngine-Core/Shaders/simple_shader.frag.spv", pipelineConfig);
     }   // TODO : change absolute path to relative
 
-    void SimpleRenderSystem::renderGameObjects(FrameInfo &frameInfo, std::vector<PzGameObject>& gameObjects)
+    void SimpleRenderSystem::renderGameObjects(FrameInfo &frameInfo)
     {
         pzPipeline->bind(frameInfo.commandBuffer);
 
@@ -76,8 +76,11 @@ namespace pz
 			nullptr
         );
 
-        for (auto &obj : gameObjects)
+        for (auto &kv : frameInfo.gameObjects)
         {
+            auto& obj = kv.second;
+            if (obj.model == nullptr) continue;
+
             SimplePushConstantsData push{};
             
             push.modelMatrix = obj.transform.mat4();

@@ -23,6 +23,8 @@ project "pzEngine-Core"
         "$(VULKAN_SDK)/Include",
         
         -- vendor
+        "vendor/spdlog/include",
+
         "vendor/GLFW/include",
 
         "vendor/glm/glm/**.hpp",
@@ -59,6 +61,7 @@ project "pzEngine-Core"
 
         defines
         {
+            "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING",
             "PZ_PLATFORM_WINDOWS",
             "PZ_BUILD_DLL",
         }

@@ -20,6 +20,7 @@ project "First-App"
         "../pzEngine-Core/Source",
         "../pzEngine-Core/vendor/GLFW/include",
         "../pzEngine-Core/vendor/imgui",
+        "../pzEngine-Core/vendor/spdlog/include",
 
         "$(VULKAN_SDK)/Include"
     }
@@ -37,7 +38,7 @@ project "First-App"
 
    filter "system:windows"
        systemversion "latest"
-       defines { "PZ_PLATFORM_WINDOWS" }
+       defines { "PZ_PLATFORM_WINDOWS", "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING" }
 
    filter "configurations:Debug"
        defines { "PZ_DEBUG" }

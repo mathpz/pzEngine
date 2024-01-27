@@ -3,6 +3,7 @@
 // For use by pzEngine applications
 #include "Application.hpp"
 #include "Core/Layer.hpp"
+#include "Core/Log/Log.hpp"
 
 // ------------Entry Point------------
 #include "Core/EntryPoint.hpp"

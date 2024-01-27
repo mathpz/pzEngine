@@ -10,7 +10,6 @@ public:
 
     void onUpdate() override
     {
-        std::cout << "Layer Update" << std::endl;
 	//	PZ_INFO("ExampleLayer::Update");
 	}
 

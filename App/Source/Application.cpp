@@ -8,26 +8,28 @@ public:
     {
 	}
 
-    void OnUpdate() override
+    void onUpdate() override
     {
-		PZ_INFO("ExampleLayer::Update");
+        std::cout << "Layer Update" << std::endl;
+	//	PZ_INFO("ExampleLayer::Update");
 	}
 
-    void OnEvent(pz::Event& event) override
+    void onEvent(pz::Event& event) override
     {
-		PZ_TRACE("{0}", event);
+	//	PZ_TRACE("{0}", event);
 	}
 
 };
 
-class Application : public pz::Application
+class SBApplication : public pz::Application
 {
 public:
-    Application()
+    SBApplication()
     {
+        PushLayer(new ExampleLayer());
     }
 
-    ~Application()
+    ~SBApplication()
     {
     }
 
@@ -36,5 +38,5 @@ public:
 
 pz::Application* pz::createApplication()
 {
-    return new Application();
+    return new SBApplication();
 }

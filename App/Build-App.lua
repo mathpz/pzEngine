@@ -19,6 +19,7 @@ project "First-App"
 
         "../pzEngine-Core/Source",
         "../pzEngine-Core/vendor/GLFW/include",
+        "../pzEngine-Core/vendor/imgui",
 
         "$(VULKAN_SDK)/Include"
     }
@@ -27,6 +28,7 @@ project "First-App"
     {
         "pzEngine-Core",
         "GLFW",
+        "ImGui"
     }
 
 

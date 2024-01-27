@@ -15,9 +15,9 @@
 #include <glm/gtc/constants.hpp>
 
 // imgui
-#include "imgui.h"
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_vulkan.h"
+//#include "imgui.h"
+//#include "backends/imgui_impl_glfw.h"
+//#include "backends/imgui_impl_vulkan.h"
 
 namespace pz
 {
@@ -78,21 +78,13 @@ namespace pz
 
         auto currentTime = std::chrono::high_resolution_clock::now();
 
-        // Setup Dear ImGui context
-        IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO();
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
-
-        // Setup Dear ImGui style
-        ImGui::StyleColorsDark();
 
         while (!pzWindow.shouldClose())
         {
             for (Layer* layer : m_LayerStack)
+            {
                 layer->onUpdate();
+            }
 
             glfwPollEvents();
 

@@ -30,13 +30,17 @@ namespace pz
 
         void Run();
 
+        void OnEvent(Event& e);
+
         void PushLayer(Layer* layer);
         void PushOverlay(Layer* overlay);
 
     private:
         void loadGameObjects();
+        bool OnWindowClose(WindowCloseEvent& e);
 
-        PzWindow pzWindow{WIDTH, HEIGHT, "pzEngine"};
+        pz::WindowProperties m_WindowProperties {};
+        PzWindow pzWindow{m_WindowProperties};
         PzDevice pzDevice{pzWindow};
         PzRenderer pzRenderer{pzWindow, pzDevice};
 
@@ -45,6 +49,7 @@ namespace pz
         PzGameObject::Map gameObjects;
 
         LayerStack m_LayerStack;
+        bool m_Running = true;
     };
 
     // To be defined in CLIENT

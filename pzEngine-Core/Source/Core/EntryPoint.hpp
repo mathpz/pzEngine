@@ -2,8 +2,6 @@
 
 #ifdef PZ_PLATFORM_WINDOWS
 
-#define BIT(x) (1 << x)
-
 extern pz::Application* pz::createApplication();
 
 int main(int argc, char** argv)

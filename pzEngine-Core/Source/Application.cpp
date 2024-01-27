@@ -21,6 +21,9 @@
 
 namespace pz
 {
+#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
+
+
     struct GlobalUbo
     {
         glm::mat4 projectionView{ 1.0f };
@@ -36,11 +39,22 @@ namespace pz
             .setMaxSets(PzSwapChain::MAX_FRAMES_IN_FLIGHT)
 			.addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, PzSwapChain::MAX_FRAMES_IN_FLIGHT)
 			.build();
+
+        pzWindow.SetEventCallback(BIND_EVENT_FN(OnEvent));
+
         loadGameObjects();
     }
 
     Application::~Application()
     {
+    }
+
+    void Application::OnEvent(Event& e)
+    {
+        EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+
+        PZ_CORE_TRACE("{0}", e);
     }
 
     void Application::Run() {
@@ -86,7 +100,8 @@ namespace pz
                 layer->onUpdate();
             }
 
-            glfwPollEvents();
+            // ! Resizing not working, check events
+            pzWindow.onUpdate();
 
             auto newTime = std::chrono::high_resolution_clock::now();
             float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
@@ -160,4 +175,9 @@ namespace pz
 		m_LayerStack.pushOverlay(overlay);
 	}
 
+    bool Application::OnWindowClose(WindowCloseEvent& e)
+    {
+        m_Running = false;
+        return true;
+    }
 } // namespace pz

@@ -30,6 +30,7 @@ project "pzEngine-Core"
 
         "vendor/imgui",
         "vendor/tinyobjloader/tiny_obj_loader.h"
+
     }
 
     libdirs

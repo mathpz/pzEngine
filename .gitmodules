@@ -10,3 +10,6 @@
 [submodule "pzEngine-Core/vendor/tinyobjloader"]
 	path = pzEngine-Core/vendor/tinyobjloader
 	url = git@github.com:tinyobjloader/tinyobjloader.git
+[submodule "pzEngine-Core/vendor/imgui"]
+	path = pzEngine-Core/vendor/imgui
+	url = git@github.com:ocornut/imgui.git

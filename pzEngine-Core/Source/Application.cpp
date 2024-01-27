@@ -14,6 +14,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 
+// imgui
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_vulkan.h"
 
 namespace pz
 {
@@ -74,7 +78,22 @@ namespace pz
 
         auto currentTime = std::chrono::high_resolution_clock::now();
 
-        while (!pzWindow.shouldClose()) {
+        // Setup Dear ImGui context
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+
+        // Setup Dear ImGui style
+        ImGui::StyleColorsDark();
+
+        while (!pzWindow.shouldClose())
+        {
+            for (Layer* layer : m_LayerStack)
+                layer->onUpdate();
+
             glfwPollEvents();
 
             auto newTime = std::chrono::high_resolution_clock::now();
@@ -137,5 +156,16 @@ namespace pz
         floor.transform.scale = { 3.f, 1.f, 3.f };
         gameObjects.emplace(floor.getId(), std::move(floor));
     }
+
+
+    void Application::PushLayer(Layer* layer)
+    {
+		m_LayerStack.pushLayer(layer);
+	}
+
+    void Application::PushOverlay(Layer* overlay)
+    {
+		m_LayerStack.pushOverlay(overlay);
+	}
 
 } // namespace pz

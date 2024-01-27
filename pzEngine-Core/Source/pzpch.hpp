@@ -23,6 +23,8 @@
 #include <unordered_set>
 #include <array>
 
+// Logging
+#include "Core/Log/Log.hpp"
 
 // PLATFORM
 #ifdef PZ_PLATFORM_WINDOWS

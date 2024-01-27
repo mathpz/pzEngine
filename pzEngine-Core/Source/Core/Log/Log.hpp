@@ -5,6 +5,9 @@
 #include "Core/Core.hpp"
 #include "spdlog/spdlog.h"
 
+// https://stackoverflow.com/questions/74317971/cannot-format-an-argument-to-make-type-t-formattable-provide-a-frormatter-t
+#include <spdlog/fmt/ostr.h>
+
 namespace pz
 {
 	class Log

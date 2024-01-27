@@ -4,12 +4,9 @@
 // pzEngine-Core
 #include "Core/Core.hpp"
 
-// std
-#include <string>
-#include <functional>
 
 namespace pz
-{   
+{
 
     // Events are currently blocking, meaning when an event occurs it
     // immediately gets dispatched and must be dealt with right then and there.
@@ -43,7 +40,7 @@ namespace pz
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
-    class PZ_API Event 
+    class PZ_API Event
     {
     public:
         bool Handled = false;

@@ -10,12 +10,12 @@ public:
 
     void onUpdate() override
     {
-	//	PZ_INFO("ExampleLayer::Update");
+    	// PZ_INFO("ExampleLayer::Update");
 	}
 
     void onEvent(pz::Event& event) override
     {
-	//	PZ_TRACE("{0}", event);
+    	PZ_TRACE("{0}", event);
 	}
 
 };

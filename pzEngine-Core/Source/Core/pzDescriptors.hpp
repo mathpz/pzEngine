@@ -56,6 +56,7 @@ namespace pz {
             VkDescriptorPoolCreateFlags poolFlags = 0;
         };
 
+        VkDescriptorPool& getDescriptorPool() { return descriptorPool; }
         PzDescriptorPool(
             PzDevice& pzDevice,
             uint32_t maxSets,

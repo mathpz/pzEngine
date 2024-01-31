@@ -23,6 +23,9 @@ namespace pz
 {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
+    // singleton
+    Application* Application::s_Instance = nullptr;
+
 
     struct GlobalUbo
     {
@@ -35,12 +38,38 @@ namespace pz
 
     Application::Application()
     {
+        PZ_CORE_ASSERT(!s_Instance, "Application already exists!");
+        s_Instance = this;
+
         globalPool = PzDescriptorPool::Builder(pzDevice)
             .setMaxSets(PzSwapChain::MAX_FRAMES_IN_FLIGHT)
 			.addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, PzSwapChain::MAX_FRAMES_IN_FLIGHT)
 			.build();
 
         pzWindow.SetEventCallback(BIND_EVENT_FN(OnEvent));
+
+        for (int i = 0; i < uboBuffers.size(); i++)
+        {
+            uboBuffers[i] = std::make_unique<PzBuffer>(
+                pzDevice,
+                sizeof(GlobalUbo),
+                1,
+                VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+            uboBuffers[i]->map();
+        }
+
+        globalSetLayout = PzDescriptorSetLayout::Builder(pzDevice)
+            .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
+            .build();
+
+        for (int i = 0; i < globlaDescriptorSets.size(); i++)
+        {
+            auto bufferInfo = uboBuffers[i]->descriptorInfo();
+            PzDescriptorWriter(*globalSetLayout, *globalPool)
+                .writeBuffer(0, &bufferInfo)
+                .build(globlaDescriptorSets[i]);
+        }
 
         loadGameObjects();
     }
@@ -54,34 +83,18 @@ namespace pz
         EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 
-        PZ_CORE_TRACE("{0}", e);
+        for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
+        {
+            (*--it)->onEvent(e);
+            if (e.Handled)
+            {
+                break;
+            }
+        }
     }
 
     void Application::Run() {
-        std::vector<std::unique_ptr<PzBuffer>> uboBuffers{ PzSwapChain::MAX_FRAMES_IN_FLIGHT };
-        for (int i = 0; i < uboBuffers.size(); i++)
-        {
-            uboBuffers[i] = std::make_unique<PzBuffer>(
-                pzDevice,
-                sizeof(GlobalUbo),
-                1,
-                VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT );
-            uboBuffers[i]->map();
-        }
 
-        auto globalSetLayout = PzDescriptorSetLayout::Builder(pzDevice)
-			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
-			.build();
-
-        std::vector<VkDescriptorSet> globlaDescriptorSets{ PzSwapChain::MAX_FRAMES_IN_FLIGHT };
-        for (int i = 0; i < globlaDescriptorSets.size(); i++)
-        {
-            auto bufferInfo = uboBuffers[i]->descriptorInfo();
-            PzDescriptorWriter(*globalSetLayout, *globalPool)
-                .writeBuffer(0, &bufferInfo)
-                .build(globlaDescriptorSets[i]);
-        }
 
         SimpleRenderSystem simpleRenderSystem{ pzDevice, pzRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
         PzCamera camera{};
@@ -93,14 +106,12 @@ namespace pz
         auto currentTime = std::chrono::high_resolution_clock::now();
 
 
-        while (!pzWindow.shouldClose())
+        while (m_Running)
         {
             for (Layer* layer : m_LayerStack)
             {
                 layer->onUpdate();
             }
-
-            // ! Resizing not working, check events
             pzWindow.onUpdate();
 
             auto newTime = std::chrono::high_resolution_clock::now();
@@ -135,6 +146,8 @@ namespace pz
             }
         }
 
+
+
         vkDeviceWaitIdle(pzDevice.device());
     }
 
@@ -149,11 +162,12 @@ namespace pz
         gameObjects.emplace(flatVase.getId(), std::move(flatVase));
 
 
-        model = PzModel::createModelFromFile(pzDevice, "F:\\programmingProjects\\pzEngine\\pzEngine-Core\\models\\smooth_vase.obj");
+        model = PzModel::createModelFromFile(pzDevice, "F:\\programmingProjects\\pzEngine\\pzEngine-Core\\models\\among_us.obj");
         auto smoothVase = PzGameObject::createGameObject();
         smoothVase.model = model;
         smoothVase.transform.translation = { .5f, 0.5f, 0.f };
-        smoothVase.transform.scale = { 3.f, 1.5f, 3.f };
+        smoothVase.transform.rotation = { 0.f, glm::pi<float>(), glm::pi<float>() };
+        smoothVase.transform.scale = { 0.005f,0.005f, 0.005f };
         gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
 
         model = PzModel::createModelFromFile(pzDevice, "F:\\programmingProjects\\pzEngine\\pzEngine-Core\\models\\quad.obj");
@@ -168,11 +182,13 @@ namespace pz
     void Application::PushLayer(Layer* layer)
     {
 		m_LayerStack.pushLayer(layer);
+        layer->onAttach();
 	}
 
     void Application::PushOverlay(Layer* overlay)
     {
 		m_LayerStack.pushOverlay(overlay);
+        overlay->onAttach();
 	}
 
     bool Application::OnWindowClose(WindowCloseEvent& e)

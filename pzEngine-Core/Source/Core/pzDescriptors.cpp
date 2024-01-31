@@ -2,10 +2,6 @@
 
 #include "pzDescriptors.hpp"
 
-// std
-#include <cassert>
-#include <stdexcept>
-
 namespace pz {
 
     // *************** Descriptor Set Layout Builder *********************

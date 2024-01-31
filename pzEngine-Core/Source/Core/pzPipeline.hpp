@@ -7,12 +7,12 @@
 
 namespace pz
 {
-    struct PipelineConfigInfo 
+    struct PipelineConfigInfo
     {
         PipelineConfigInfo(const PipelineConfigInfo&) = delete;
         PipelineConfigInfo &operator=(const PipelineConfigInfo&) = delete;
 
-        VkPipelineViewportStateCreateInfo viewportInfo;             
+        VkPipelineViewportStateCreateInfo viewportInfo;
         VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
         VkPipelineRasterizationStateCreateInfo rasterizationInfo;
         VkPipelineMultisampleStateCreateInfo multisampleInfo;
@@ -44,7 +44,7 @@ namespace pz
             static std::vector<char> readFile(const std::string& filepath);
 
             void createGraphicsPipeline(const std::string& vertexShaderFilepath, const std::string& fragmentShaderFilepath, const PipelineConfigInfo& configInfo);
-            
+
             void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);
 
             PzDevice& pzDevice;

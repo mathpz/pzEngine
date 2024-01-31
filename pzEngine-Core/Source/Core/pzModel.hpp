@@ -13,7 +13,7 @@ namespace pz
     class PzModel
     {
         public:
-        
+
         struct Vertex
         {
             glm::vec3 position{};
@@ -39,13 +39,13 @@ namespace pz
         };
 
         PzModel(PzDevice &pzDevice, const PzModel::Data &data);
-        ~PzModel();	
+        ~PzModel();
 
         PzModel(const PzModel&) = delete;
         PzModel& operator=(const PzModel&) = delete;
 
         static std::unique_ptr<PzModel> createModelFromFile(PzDevice &pzDevice, const std::string &filepath);
-        
+
         void bind(VkCommandBuffer commandBuffer);
         void draw(VkCommandBuffer commandBuffer);
 

@@ -152,4 +152,9 @@ namespace pz
     {
 		return m_Data.VSync;
 	}
+
+    bool PzWindow::shouldClose()
+    {
+		return glfwWindowShouldClose(m_Window);
+	}
 } // namespace pz

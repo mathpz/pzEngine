@@ -19,6 +19,8 @@
 .vscode
 .vs/
 pzEngine-Core/models
+bin-int/
+bin/
 
 # Files #
 ###################

@@ -35,7 +35,7 @@ namespace pz
 
         file.seekg(0);
         file.read(buffer.data(), fileSize);
-        
+
         file.close();
         return buffer;
     }
@@ -124,8 +124,8 @@ namespace pz
         //
         //      (a, b) .
         //                                =>   a, b,     c, d,    e, f,
-        //                  .(e, f)           Vertex1   Vertex2  Vertex3  
-        //   (c, d) .   
+        //                  .(e, f)           Vertex1   Vertex2  Vertex3
+        //   (c, d) .
         //
 
         configInfo.inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -141,8 +141,8 @@ namespace pz
 
         // Rasterization
         configInfo.rasterizationInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-        configInfo.rasterizationInfo.depthClampEnable = VK_FALSE;  
-        configInfo.rasterizationInfo.rasterizerDiscardEnable = VK_FALSE;  
+        configInfo.rasterizationInfo.depthClampEnable = VK_FALSE;
+        configInfo.rasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
         configInfo.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;            // how to handle filling points between vertices
         configInfo.rasterizationInfo.lineWidth = 1.0f;                              // how thick lines should be when drawn
         configInfo.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
@@ -178,7 +178,7 @@ namespace pz
         configInfo.colorBlendInfo.blendConstants[0] = 0.0f;                         // optional
         configInfo.colorBlendInfo.blendConstants[1] = 0.0f;                         // optional
         configInfo.colorBlendInfo.blendConstants[2] = 0.0f;                         // optional
-        configInfo.colorBlendInfo.blendConstants[3] = 0.0f;                         // optional 
+        configInfo.colorBlendInfo.blendConstants[3] = 0.0f;                         // optional
 
         configInfo.depthStencilInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
         configInfo.depthStencilInfo.depthTestEnable = VK_TRUE;

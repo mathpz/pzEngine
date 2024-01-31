@@ -35,6 +35,12 @@ namespace pz
         void PushLayer(Layer* layer);
         void PushOverlay(Layer* overlay);
 
+        inline static Application& Get() { return *s_Instance; }
+        inline pz::PzWindow& GetWindow() { return pzWindow; }
+        inline pz::PzDevice& GetDevice() { return pzDevice; }
+        inline pz::PzDescriptorPool& GetDescriptorPool() { return *globalPool; }
+        inline pz::PzRenderer& GetRenderer() { return pzRenderer; }
+
     private:
         void loadGameObjects();
         bool OnWindowClose(WindowCloseEvent& e);
@@ -46,10 +52,18 @@ namespace pz
 
         // note: order of declarations matters
         std::unique_ptr<PzDescriptorPool> globalPool{};
+
+        std::vector<std::unique_ptr<PzBuffer>> uboBuffers{ PzSwapChain::MAX_FRAMES_IN_FLIGHT };
+        std::unique_ptr<PzDescriptorSetLayout> globalSetLayout{};
+        std::vector<VkDescriptorSet> globlaDescriptorSets{ PzSwapChain::MAX_FRAMES_IN_FLIGHT };
+
         PzGameObject::Map gameObjects;
 
         LayerStack m_LayerStack;
         bool m_Running = true;
+
+    private:
+        static Application* s_Instance;
     };
 
     // To be defined in CLIENT

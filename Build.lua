@@ -1,8 +1,15 @@
--- premake5.lua
+include "Dependencies.lua"
+
 workspace "pzEngine"
-   architecture "x64"
-   configurations { "Debug", "Release", "Dist" }
+   architecture "x86_64"
    startproject "First-App"
+   
+   configurations { "Debug", "Release", "Dist" }
+
+   flags
+   {
+      "MultiProcessorCompile"
+   }
 
    OutputDir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 
@@ -15,4 +22,6 @@ group "Core"
 	include "pzEngine-Core/Build-Core.lua"
 group ""
 
-include "App/Build-App.lua"
+group "Misc"
+   include "App/Build-App.lua"
+group ""

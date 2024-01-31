@@ -27,7 +27,7 @@ namespace pz
 		KeyMappings keys{};
 		float moveSpeed{ 3.f };
 		float lookSpeed{ 1.5 };
-	
-	
+
+
 	};
 } // namespace pz

@@ -9,19 +9,20 @@
 
 namespace pz
 {
-        struct WindowProperties
-        {
-			std::string title;
-			unsigned int width;
-			unsigned int height;
 
-            WindowProperties(const std::string& title = "pzEngine",
-                unsigned int width = 1280,
-                unsigned int height = 720)
-                : title(title), width(width), height(height)
-            {
-			}
-		};
+    struct WindowProperties
+    {
+		std::string title;
+		unsigned int width;
+		unsigned int height;
+
+        WindowProperties(const std::string& title = "pzEngine",
+            unsigned int width = 1280,
+            unsigned int height = 720)
+            : title(title), width(width), height(height)
+        {
+		}
+	};
 
     // Interface representing a desktop system based Window
     class PzWindow
@@ -39,7 +40,7 @@ namespace pz
             // window specific
             void onUpdate();
 
-            bool shouldClose() { return glfwWindowShouldClose(m_Window); }
+            bool shouldClose();
             bool wasWindowResized() const { return frameBufferResized; }
             void resetWindowResizedFlag() { frameBufferResized = false; }
 

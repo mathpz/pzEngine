@@ -44,6 +44,13 @@ class PzDevice {
   VkQueue graphicsQueue() const { return graphicsQueue_; }
   VkQueue presentQueue() const { return presentQueue_; }
 
+
+  // gets for imgui
+  VkInstance getInstance() const { return instance; }
+  VkPhysicalDevice getPhysicalDevice() const { return physicalDevice; }
+  uint32_t getQueueFamily() { return findQueueFamilies(physicalDevice).graphicsFamily; }
+  VkQueue getQueue() const { return graphicsQueue_; }
+
   SwapChainSupportDetails getSwapChainSupport() { return querySwapChainSupport(physicalDevice); }
   uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
   QueueFamilyIndices findPhysicalQueueFamilies() { return findQueueFamilies(physicalDevice); }

@@ -10,7 +10,7 @@ public:
 
     void onUpdate() override
     {
-    	// PZ_INFO("ExampleLayer::Update");
+
 	}
 
     void onEvent(pz::Event& event) override
@@ -26,6 +26,7 @@ public:
     SBApplication()
     {
         PushLayer(new ExampleLayer());
+        PushOverlay(new pz::ImGuiLayer());
     }
 
     ~SBApplication()

@@ -2,69 +2,70 @@ project "pzEngine-Core"
     kind "StaticLib"
     language "C++"
     cppdialect "C++17"
-    targetdir "Binaries/%{cfg.buildcfg}"
-    staticruntime "on"
+    staticruntime "off"
 
+	targetdir ("%{wks.location}/bin/" .. OutputDir .. "/%{prj.name}")
+	objdir ("%{wks.location}/bin-int/" .. OutputDir .. "/%{prj.name}")
+    
     pchheader "pzpch.hpp"
-   
-    files { "Source/**.hpp", "Source/**.cpp", "**.h", "**.vert", "**.frag"}
+    pchsource "Source/pzpch.cpp"
 
-    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
-    objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
+    files 
+    { 
+        "Source/**.h",
+        "Source/**.hpp",
+        "Source/**.cpp",
+
+        "Shaders/**.vert",
+        "Shaders/**.frag",
+        
+        "vendor/glm/glm/**.hpp",
+        "vendor/glm/glm/**.inl",
+    }
+
 
     GLSLC_PATH = "..\\Vendor\\Binaries\\glslc"
+
+    defines
+    {
+        "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING",
+        "PZ_PLATFORM_WINDOWS",
+    }
 
     includedirs
     {
         "Source",
         "Shaders",
-
-        -- vulkan sdk
-        "$(VULKAN_SDK)/Include",
-        
-        -- vendor
         "vendor/spdlog/include",
 
-        "vendor/GLFW/include",
-
-        "vendor/glm/glm/**.hpp",
-        "vendor/glm/glm/**.inl",
-
-        "vendor/imgui",
-        "vendor/tinyobjloader/tiny_obj_loader.h"
-
-    }
-
-    libdirs
-    {
-        "$(VULKAN_SDK)/Lib"
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.ImGui}",
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.VulkanSDK}",
+        "%{IncludeDir.tinyobjloader}"
     }
     
+    libdirs
+    {
+        "%{LibraryDir.VulkanSDK}"
+    }
+
     links
     {
         "GLFW",
         "vulkan-1",
         "ImGui"
     }
-
-
+    
+    
     -- WINDOWS BUILD WITH VISUAL STUDIO
     filter {"system:windows", "action:vs*"}
-        pchsource "Source/pzpch.cpp"
-        
-        prebuildcommands 
-        { 
-            GLSLC_PATH .. "\\Windows\\glslc.exe Shaders\\simple_shader.vert -o Shaders\\simple_shader.vert.spv", 
-            GLSLC_PATH .. "\\Windows\\glslc.exe Shaders\\simple_shader.frag -o Shaders\\simple_shader.frag.spv" 
-        
-        }
+    prebuildcommands 
+    { 
+        "%{wks.location}\\pzEngine-Core\\Shaders\\glslc.exe Shaders\\simple_shader.vert -o Shaders\\simple_shader.vert.spv", 
+        "%{wks.location}\\pzEngine-Core\\Shaders\\glslc.exe Shaders\\simple_shader.frag -o Shaders\\simple_shader.frag.spv" 
+    }
 
-        defines
-        {
-            "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING",
-            "PZ_PLATFORM_WINDOWS",
-            "PZ_BUILD_DLL",
-        }
 
     filter "configurations:Debug"
         defines { "PZ_DEBUG" }

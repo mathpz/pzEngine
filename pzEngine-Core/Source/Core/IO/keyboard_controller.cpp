@@ -37,7 +37,7 @@ namespace pz
             gameObject.transform.translation += moveSpeed * dt * glm::normalize(moveDir);
         }
     }
-	
+
 
 } // namespace pz
 

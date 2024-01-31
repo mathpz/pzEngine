@@ -7,7 +7,7 @@ layout(location = 2) in vec3 fragNormalWorld;
 
 layout (location = 0) out vec4 outColor;
 
-// Global Ubo = Uniform buffer object 
+// Global Ubo = Uniform buffer object
 layout(set = 0, binding = 0) uniform GlobalUbo {
 	mat4 projectionViewMatrix;
     vec4 ambientLightColor;
@@ -16,8 +16,8 @@ layout(set = 0, binding = 0) uniform GlobalUbo {
 } ubo;
 
 layout(push_constant) uniform Push {
-    mat4 modelMatrix; 
-    mat4 normalMatrix; 
+    mat4 modelMatrix;
+    mat4 normalMatrix;
 } push;
 
 

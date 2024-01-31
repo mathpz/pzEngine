@@ -22,16 +22,16 @@ namespace pz
             float getAspectRatio() const { return pzSwapChain->extentAspectRatio(); }
             bool isFrameInProgress() const { return m_isFrameStarted; }
 
-            VkCommandBuffer getCurrentCommandBuffer() const 
-            { 
+            VkCommandBuffer getCurrentCommandBuffer() const
+            {
                 assert(m_isFrameStarted && "Cannot get command buffer when frame not in progress");
-                return commandBuffers[m_currentFrameIndex]; 
+                return commandBuffers[m_currentFrameIndex];
             }
 
-            int getFrameIndex() const 
-            { 
-                assert(m_isFrameStarted && "Cannot get frame index when frame not in progress");    
-                return m_currentFrameIndex; 
+            int getFrameIndex() const
+            {
+                assert(m_isFrameStarted && "Cannot get frame index when frame not in progress");
+                return m_currentFrameIndex;
             }
 
             VkCommandBuffer beginFrame();

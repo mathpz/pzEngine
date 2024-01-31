@@ -82,7 +82,7 @@ namespace pz
             if (obj.model == nullptr) continue;
 
             SimplePushConstantsData push{};
-            
+
             push.modelMatrix = obj.transform.mat4();
             push.normalMatrix = obj.transform.normalMatrix();
 

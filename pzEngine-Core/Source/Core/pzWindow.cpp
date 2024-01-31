@@ -97,6 +97,14 @@ namespace pz
             }
         });
 
+        glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
+        {
+            WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+            KeyTypedEvent event(keycode);
+            data.eventCallback(event);
+        });
+
         glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
         {
             WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);

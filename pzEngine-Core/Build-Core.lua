@@ -6,19 +6,19 @@ project "pzEngine-Core"
 
 	targetdir ("%{wks.location}/bin/" .. OutputDir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. OutputDir .. "/%{prj.name}")
-    
+
     pchheader "pzpch.hpp"
     pchsource "Source/pzpch.cpp"
 
-    files 
-    { 
+    files
+    {
         "Source/**.h",
         "Source/**.hpp",
         "Source/**.cpp",
 
         "Shaders/**.vert",
         "Shaders/**.frag",
-        
+
         "vendor/glm/glm/**.hpp",
         "vendor/glm/glm/**.inl",
     }
@@ -44,7 +44,7 @@ project "pzEngine-Core"
         "%{IncludeDir.VulkanSDK}",
         "%{IncludeDir.tinyobjloader}"
     }
-    
+
     libdirs
     {
         "%{LibraryDir.VulkanSDK}"
@@ -56,14 +56,14 @@ project "pzEngine-Core"
         "vulkan-1",
         "ImGui"
     }
-    
-    
+
+
     -- WINDOWS BUILD WITH VISUAL STUDIO
     filter {"system:windows", "action:vs*"}
-    prebuildcommands 
-    { 
-        "%{wks.location}\\pzEngine-Core\\Shaders\\glslc.exe Shaders\\simple_shader.vert -o Shaders\\simple_shader.vert.spv", 
-        "%{wks.location}\\pzEngine-Core\\Shaders\\glslc.exe Shaders\\simple_shader.frag -o Shaders\\simple_shader.frag.spv" 
+    prebuildcommands
+    {
+        "%{wks.location}\\pzEngine-Core\\Shaders\\glslc.exe Shaders\\simple_shader.vert -o Shaders\\simple_shader.vert.spv",
+        "%{wks.location}\\pzEngine-Core\\Shaders\\glslc.exe Shaders\\simple_shader.frag -o Shaders\\simple_shader.frag.spv"
     }
 
 
@@ -71,13 +71,13 @@ project "pzEngine-Core"
         defines { "PZ_DEBUG" }
         runtime "Debug"
         symbols "on"
- 
+
     filter "configurations:Release"
         defines { "PZ_RELEASE" }
         runtime "Release"
         optimize "on"
         symbols "on"
-    
+
     filter "configurations:Dist"
         defines { "PZ_DIST" }
         runtime "Release"
@@ -85,7 +85,7 @@ project "pzEngine-Core"
         symbols "off"
 
 
-    --  TODO COMPLETE LINUX BUILD 
+    --  TODO COMPLETE LINUX BUILD
     filter {"system:linux"}
         prebuildcommands { GLSLC_PATH .. "/Linux/glslc Shaders/simple_shader.vert -o Shaders/simple_shader.vert.spv", GLSLC_PATH .. "/Linux/glslc Shaders/simple_shader.frag -o Shaders/simple_shader.frag.spv" }
         buildoptions { "-I. -I$(VULKAN_SDK_PATH)/include"}

@@ -7,6 +7,7 @@
 #include "Core/simpleRenderSystem.hpp"
 #include "Core/pzCamera.hpp"
 #include "Core/IO/keyboard_controller.hpp"
+#include "Core/pzInput.hpp"
 
 // GLM
 #define  GLM_FORCE_RADIANS
@@ -119,6 +120,9 @@ namespace pz
             currentTime = newTime;
 
             // frameTime = glm::min(frameTime, MAX_FRAME_TIME);
+
+            auto[x, y] = Input::getMousePosition();
+            PZ_CORE_TRACE("{0}, {1}", x, y);
 
             cameraController.moveInPlaneXZ(pzWindow.getGLFWwindow(), frameTime, viewerObject);
             camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);

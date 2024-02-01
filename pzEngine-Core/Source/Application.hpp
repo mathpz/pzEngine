@@ -12,6 +12,7 @@
 #include "Core/pzRenderer.hpp"
 #include "Core/pzUniformBuffer.hpp"
 #include "Core/pzDescriptors.hpp"
+#include "Core/ImGui/ImGuiLayer.hpp"
 
 namespace pz
 {
@@ -60,6 +61,7 @@ namespace pz
         PzGameObject::Map gameObjects;
 
         LayerStack m_LayerStack;
+        ImGuiLayer* m_ImGuiLayer;
         bool m_Running = true;
 
     private:

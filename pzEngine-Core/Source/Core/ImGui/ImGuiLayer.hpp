@@ -15,18 +15,12 @@ namespace pz
 
 			void onAttach();
 			void onDetach();
-			void onEvent(Event& event);
-			void onUpdate();
+			void onImGuiRender();
+
+			void Begin();
+			void End();
 
 	private:
-			bool onMouseButtonPressedEvent(MouseButtonPressedEvent& event);
-			bool onMouseButtonReleasedEvent(MouseButtonReleasedEvent& event);
-			bool onMouseMovedEvent(MouseMovedEvent& event);
-			bool onMouseScrolledEvent(MouseScrolledEvent& event);
-			bool onKeyPressedEvent(KeyPressedEvent& event);
-			bool onKeyReleasedEvent(KeyReleasedEvent& event);
-			bool onKeyTypedEvent(KeyTypedEvent& event);
-			bool onWindowResizeEvent(WindowResizeEvent& event);
 
 
 	};

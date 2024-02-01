@@ -1,6 +1,6 @@
 #include "pzpch.hpp"
 
-#include "pzInput.hpp"
+#include "Core/pzInput.hpp"
 #include "Application.hpp"
 
 #include <GLFW/glfw3.h>

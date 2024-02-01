@@ -16,9 +16,9 @@
 #include <glm/gtc/constants.hpp>
 
 // imgui
-//#include "imgui.h"
-//#include "backends/imgui_impl_glfw.h"
-//#include "backends/imgui_impl_vulkan.h"
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_vulkan.h"
 
 namespace pz
 {
@@ -72,6 +72,9 @@ namespace pz
                 .build(globlaDescriptorSets[i]);
         }
 
+        m_ImGuiLayer = new ImGuiLayer();
+        PushOverlay(m_ImGuiLayer);
+
         loadGameObjects();
     }
 
@@ -113,6 +116,8 @@ namespace pz
             {
                 layer->onUpdate();
             }
+
+
             pzWindow.onUpdate();
 
             auto newTime = std::chrono::high_resolution_clock::now();
@@ -120,9 +125,6 @@ namespace pz
             currentTime = newTime;
 
             // frameTime = glm::min(frameTime, MAX_FRAME_TIME);
-
-            auto[x, y] = Input::getMousePosition();
-            PZ_CORE_TRACE("{0}, {1}", x, y);
 
             cameraController.moveInPlaneXZ(pzWindow.getGLFWwindow(), frameTime, viewerObject);
             camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
@@ -132,9 +134,11 @@ namespace pz
 
             camera.setPerspectiveProjection(glm::radians(50.f), aspectRatio, 0.1f, 100.f);
 
-            if (auto commandBuffer = pzRenderer.beginFrame()) {
+            if (auto commandBuffer = pzRenderer.beginFrame())
+            {
                 int frameIndex = pzRenderer.getFrameIndex();
                 FrameInfo frameInfo{ frameIndex, frameTime, commandBuffer, camera, globlaDescriptorSets[frameIndex], gameObjects};
+
 
                 // update
                 GlobalUbo ubo{};
@@ -145,12 +149,19 @@ namespace pz
                 // render
                 pzRenderer.beginSwapChainRenderPass(commandBuffer);
                 simpleRenderSystem.renderGameObjects(frameInfo);
+                m_ImGuiLayer->Begin();
+                for (Layer* layer : m_LayerStack)
+                {
+                    layer->onImGuiRender();
+                }
+                m_ImGuiLayer->End();
                 pzRenderer.endSwapChainRenderPass(commandBuffer);
                 pzRenderer.endFrame();
+
             }
+
+
         }
-
-
 
         vkDeviceWaitIdle(pzDevice.device());
     }

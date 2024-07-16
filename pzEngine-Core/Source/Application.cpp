@@ -143,8 +143,11 @@ namespace pz
 
                 // render
                 pzRenderer.beginSwapChainRenderPass(commandBuffer);
+
+                // order here matters
                 simpleRenderSystem.renderGameObjects(frameInfo);
                 pointLightSystem.render(frameInfo);
+
                 m_ImGuiLayer->Begin();
                 for (Layer* layer : m_LayerStack)
                 {

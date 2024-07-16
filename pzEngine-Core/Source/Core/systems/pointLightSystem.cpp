@@ -3,12 +3,12 @@
 
 #include "Core/systems/pointLightSystem.hpp"
 
-
 // libs
 #define  GLM_FORCE_RADIANS
 #define  GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
+
 
 namespace pz
 {
@@ -50,6 +50,7 @@ namespace pz
 
         PipelineConfigInfo pipelineConfig{};
         PzPipeline::defaultPipelineConfigInfo(pipelineConfig);
+        PzPipeline::enableAlphaBlending(pipelineConfig);
         pipelineConfig.attributeDescriptions.clear();
         pipelineConfig.bindingDescriptions.clear();
         pipelineConfig.renderPass = renderPass;
@@ -85,6 +86,20 @@ namespace pz
 
     void PointLightSystem::render(FrameInfo &frameInfo)
     {
+        // sort lights by distance to camera
+        std::map<float, PzGameObject::id_t> sortedLights;
+        for (auto& kv : frameInfo.gameObjects)
+        {
+            auto& obj = kv.second;
+            if (obj.pointLight == nullptr)
+                continue;
+
+            // calculate distance to camera
+            auto offset = frameInfo.camera.getPosition() - obj.transform.translation;
+            float distSquared = glm::dot(offset, offset);
+            sortedLights[distSquared] = obj.getId();
+        }
+
         pzPipeline->bind(frameInfo.commandBuffer);
 
         vkCmdBindDescriptorSets(
@@ -98,11 +113,11 @@ namespace pz
 			nullptr
         );
 
-        for (auto& kv : frameInfo.gameObjects)
+        // iterate over sorted lights in reverse order
+        for (auto it = sortedLights.rbegin(); it != sortedLights.rend(); ++it)
         {
-            auto& obj = kv.second;
-            if (obj.pointLight == nullptr)
-                continue;
+            // use game obj id to find light object
+            auto& obj = frameInfo.gameObjects.at(it->second);
 
             PointLightPushConstants push{};
             push.position = glm::vec4(obj.transform.translation, 1.f);

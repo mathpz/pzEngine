@@ -4,7 +4,8 @@
 #include "Application.hpp"
 
 // pzEngine
-#include "Core/simpleRenderSystem.hpp"
+#include "Core/systems/simpleRenderSystem.hpp"
+#include "Core/systems/pointLightSystem.hpp"
 #include "Core/pzCamera.hpp"
 #include "Core/IO/keyboard_controller.hpp"
 #include "Core/pzInput.hpp"
@@ -26,16 +27,6 @@ namespace pz
 
     // singleton
     Application* Application::s_Instance = nullptr;
-
-
-    struct GlobalUbo
-    {
-        glm::mat4 projectionView{ 1.0f };
-        glm::vec4 ambientLightColor{1.f, 1.f, 1.f, .02f};  // w is intensity
-        glm::vec3 lightPosition{ -1.f };
-        alignas (16) glm::vec4 lightColor{ 1.f, 1.f, 1.f, 1.f };
-
-    };
 
     Application::Application()
     {
@@ -101,6 +92,7 @@ namespace pz
 
 
         SimpleRenderSystem simpleRenderSystem{ pzDevice, pzRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
+        PointLightSystem pointLightSystem{ pzDevice, pzRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout() };
         PzCamera camera{};
 
         auto viewerObject = PzGameObject::createGameObject();
@@ -142,19 +134,24 @@ namespace pz
 
                 // update
                 GlobalUbo ubo{};
-                ubo.projectionView = camera.getProjectionMatrix() * camera.getView();
+                ubo.projection = camera.getProjectionMatrix();
+                ubo.view = camera.getView();
+                ubo.inverseView = camera.getInverseView();
+                pointLightSystem.update(frameInfo, ubo);
                 uboBuffers[frameIndex]->writeToBuffer(&ubo);
                 uboBuffers[frameIndex]->flush();
 
                 // render
                 pzRenderer.beginSwapChainRenderPass(commandBuffer);
                 simpleRenderSystem.renderGameObjects(frameInfo);
+                pointLightSystem.render(frameInfo);
                 m_ImGuiLayer->Begin();
                 for (Layer* layer : m_LayerStack)
                 {
                     layer->onImGuiRender();
                 }
                 m_ImGuiLayer->End();
+
                 pzRenderer.endSwapChainRenderPass(commandBuffer);
                 pzRenderer.endFrame();
 
@@ -191,19 +188,46 @@ namespace pz
         floor.transform.translation = { 0.f, 0.5f, 0.f };
         floor.transform.scale = { 3.f, 1.f, 3.f };
         gameObjects.emplace(floor.getId(), std::move(floor));
+
+        {
+  //          auto pointLight = PzGameObject::makePointLight(0.2f);
+  //          gameObjects.emplace(pointLight.getId(), std::move(pointLight));
+        }
+
+        std::vector<glm::vec3> lightColors{
+            {1.f, .1f, .1f},
+            {.1f, .1f, 1.f},
+            {.1f, 1.f, .1f},
+            {1.f, 1.f, .1f},
+            {.1f, 1.f, 1.f},
+            {1.f, 1.f, 1.f}  //
+        };
+
+        for (int i = 0; i < lightColors.size(); i++)
+        {
+            auto pointLight = PzGameObject::makePointLight(0.2f);
+            pointLight.color = lightColors[i];
+            auto rotateLight = glm::rotate(
+                glm::mat4(1.f),
+                (i * glm::two_pi<float>()) / lightColors.size(),
+				{0.f, -11.f, 0.f});
+
+            pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.0f, -1.f, -1.f, 1.f));
+            gameObjects.emplace(pointLight.getId(), std::move(pointLight));
+        }
     }
 
 
     void Application::PushLayer(Layer* layer)
     {
 		m_LayerStack.pushLayer(layer);
-        layer->onAttach();
+
 	}
 
     void Application::PushOverlay(Layer* overlay)
     {
 		m_LayerStack.pushOverlay(overlay);
-        overlay->onAttach();
+
 	}
 
     bool Application::OnWindowClose(WindowCloseEvent& e)

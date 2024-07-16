@@ -41,6 +41,7 @@ namespace pz
         inline pz::PzDevice& GetDevice() { return pzDevice; }
         inline pz::PzDescriptorPool& GetDescriptorPool() { return *globalPool; }
         inline pz::PzRenderer& GetRenderer() { return pzRenderer; }
+        inline PzGameObject::Map& GetGameObjects() { return gameObjects; }
 
     private:
         void loadGameObjects();

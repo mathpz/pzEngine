@@ -4,7 +4,7 @@
 
 namespace pz
 {
-    glm::mat4 TransformComponent::mat4() 
+    glm::mat4 TransformComponent::mat4()
     {
         const float c3 = glm::cos(rotation.z);
         const float s3 = glm::sin(rotation.z);
@@ -43,7 +43,7 @@ namespace pz
         const float c1 = glm::cos(rotation.y);
         const float s1 = glm::sin(rotation.y);
         const glm::vec3 invScale = 1.0f / scale;
-        
+
         return glm::mat3
         {
             {
@@ -63,4 +63,16 @@ namespace pz
             },
         };
     }
+
+    PzGameObject PzGameObject::makePointLight(float intensity, float radius, glm::vec3 color)
+    {
+		PzGameObject gameObject = PzGameObject::createGameObject();
+        gameObject.color = color;
+        gameObject.transform.scale.x = radius;
+        gameObject.pointLight = std::make_unique<PointLightComponent>();
+        gameObject.pointLight->lightIntensity = intensity;
+
+        return gameObject;
+    }
+
 } // namespace pz

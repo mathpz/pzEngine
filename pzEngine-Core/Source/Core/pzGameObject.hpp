@@ -25,6 +25,10 @@ namespace pz
         glm::mat3 normalMatrix();
     };
 
+    struct PointLightComponent
+    {
+        float lightIntensity = 1.0f;
+    };
 
 
     class PzGameObject
@@ -40,6 +44,8 @@ namespace pz
                 return PzGameObject{currentId++};
             }
 
+            static PzGameObject makePointLight(float intensity = 10.0, float radius = 0.1f, glm::vec3 color = glm::vec3(1.0f));
+
             PzGameObject(const PzGameObject&) = delete;
             PzGameObject &operator=(const PzGameObject&) = delete;
             PzGameObject(PzGameObject&&) = default;
@@ -47,9 +53,12 @@ namespace pz
 
             id_t getId() const { return id; }
 
-            std::shared_ptr<PzModel> model{};
             glm::vec3 color{};
             TransformComponent transform{};
+
+            // optional pointer components
+            std::shared_ptr<PzModel> model{};
+            std::unique_ptr<PointLightComponent> pointLight = nullptr;
 
         private:
             PzGameObject(id_t objId) : id{objId} {}

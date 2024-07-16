@@ -13,16 +13,12 @@ public:
 
 	}
 
-	virtual void onImGuiRender()
+	virtual void onImGuiRender() override
 	{
-	//	ImGui::Begin("Test");
-	//	ImGui::Text("Hello World");
-	//	ImGui::End();
 	}
 
 	void onEvent(pz::Event& event) override
 	{
-
 	}
 };
 

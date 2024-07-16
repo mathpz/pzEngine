@@ -6,6 +6,7 @@
 #include "Core/Platform/Vulkan/imgui_impl_vulkan.h"
 
 #include "Application.hpp"
+#include "Core/pzGameObject.hpp"
 
 namespace pz
 {
@@ -111,7 +112,27 @@ namespace pz
 
 	void ImGuiLayer::onImGuiRender()
 	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
+		Application& app = Application::Get();
+
+		static float f0 = 0.0f;
+		static float f1 = 0.0f;
+		static float f2 = 0.0f;
+
+		pz::PzGameObject::Map& gameObjects = app.GetGameObjects();
+
+		ImGui::Text("Translation");
+		for (auto& [id, obj] : gameObjects)
+		{
+			ImGui::Text("Object Id: %d", id);
+
+			ImGui::PushID(id);
+			ImGui::SliderFloat("X:", &obj.transform.translation.x, -5.0f, 5.0f);
+			ImGui::SliderFloat("Y:", &obj.transform.translation.y, -5.0f, 5.0f);
+			ImGui::SliderFloat("Z:", &obj.transform.translation.z, -5.0f, 5.0f);
+			ImGui::PopID();
+		}
+
+
 	}
+
 }  // namespace pz

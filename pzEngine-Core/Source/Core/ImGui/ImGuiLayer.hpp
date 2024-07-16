@@ -13,9 +13,9 @@ namespace pz
 			ImGuiLayer();
 			~ImGuiLayer();
 
-			void onAttach();
-			void onDetach();
-			void onImGuiRender();
+			virtual void onAttach() override;
+			virtual void onDetach() override;
+			virtual void onImGuiRender() override;
 
 			void Begin();
 			void End();

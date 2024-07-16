@@ -69,8 +69,8 @@ namespace pz
         shaderStages[1].pSpecializationInfo = nullptr;
 
 
-        auto bindingDescriptions = PzModel::Vertex::getBindingDescriptions();
-        auto attributeDescriptions = PzModel::Vertex::getAttributeDescriptions();
+        auto& bindingDescriptions = configInfo.bindingDescriptions;
+        auto& attributeDescriptions = configInfo.attributeDescriptions;
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
         vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
@@ -196,6 +196,9 @@ namespace pz
         configInfo.dynamicStateInfo.pDynamicStates = configInfo.dynamicStateEnables.data();
         configInfo.dynamicStateInfo.dynamicStateCount = static_cast<uint32_t>(configInfo.dynamicStateEnables.size());
         configInfo.dynamicStateInfo.flags = 0;
+
+        configInfo.bindingDescriptions = PzModel::Vertex::getBindingDescriptions();
+        configInfo.attributeDescriptions = PzModel::Vertex::getAttributeDescriptions();
     }
 
     void PzPipeline::bind(VkCommandBuffer commandBuffer)

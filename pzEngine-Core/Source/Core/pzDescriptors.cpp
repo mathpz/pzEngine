@@ -31,7 +31,7 @@ namespace pz {
         PzDevice& pzDevice, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings)
         : pzDevice{ pzDevice }, bindings{ bindings } {
         std::vector<VkDescriptorSetLayoutBinding> setLayoutBindings{};
-        for (auto kv : bindings) {
+        for (const auto& kv : bindings) {
             setLayoutBindings.push_back(kv.second);
         }
 

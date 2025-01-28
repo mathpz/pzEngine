@@ -1,7 +1,14 @@
 # pzEngine
 # pzEngine
 
-Setup Development enviroment on Windows:
-
-https://www.msys2.org/
-https://packages.msys2.org/groups/mingw-w64-x86_64-vulkan-devel
+Build setup:
+```
+git clone blabla
+cd blabla
+git submodule init
+git submodule update
+```
+or
+```
+git clone --recursive-submodules blabla
+```

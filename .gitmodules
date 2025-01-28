@@ -1,15 +1,15 @@
-[submodule "pzEngine-Core/vendor/spdlog"]
-	path = pzEngine-Core/vendor/spdlog
+[submodule "pzEngine-Core/Third_Party/spdlog"]
+	path = pzEngine-Core/Third_Party/spdlog
 	url = git@github.com:gabime/spdlog.git
-[submodule "pzEngine-Core/vendor/GLFW"]
-	path = pzEngine-Core/vendor/GLFW
+[submodule "pzEngine-Core/Third_Party/GLFW"]
+	path = pzEngine-Core/Third_Party/GLFW
 	url = git@github.com:mathpz/glfw.git
-[submodule "pzEngine-Core/vendor/glm"]
-	path = pzEngine-Core/vendor/glm
+[submodule "pzEngine-Core/Third_Party/glm"]
+	path = pzEngine-Core/Third_Party/glm
 	url = git@github.com:g-truc/glm.git
-[submodule "pzEngine-Core/vendor/tinyobjloader"]
-	path = pzEngine-Core/vendor/tinyobjloader
+[submodule "pzEngine-Core/Third_Party/tinyobjloader"]
+	path = pzEngine-Core/Third_Party/tinyobjloader
 	url = git@github.com:tinyobjloader/tinyobjloader.git
-[submodule "pzEngine-Core/vendor/imgui"]
-	path = pzEngine-Core/vendor/imgui
+[submodule "pzEngine-Core/Third_Party/imgui"]
+	path = pzEngine-Core/Third_Party/imgui
 	url = git@github.com:ocornut/imgui.git

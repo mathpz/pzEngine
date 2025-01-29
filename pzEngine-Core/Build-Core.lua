@@ -16,15 +16,15 @@ project "pzEngine-Core"
         "Source/**.hpp",
         "Source/**.cpp",
 
-        "Shaders/**.vert",
-        "Shaders/**.frag",
+        "Assets/Shaders/**.vert",
+        "Assets/Shaders/**.frag",
 
-        "vendor/glm/glm/**.hpp",
-        "vendor/glm/glm/**.inl",
+        "Third_Party/glm/glm/**.hpp",
+        "Third_Party/glm/glm/**.inl",
     }
 
 
-    GLSLC_PATH = "..\\Vendor\\Binaries\\glslc"
+    -- GLSLC_PATH = "..\\Vendor\\Binaries\\glslc"
 
     defines
     {
@@ -35,8 +35,9 @@ project "pzEngine-Core"
     includedirs
     {
         "Source",
-        "Shaders",
-        "vendor/spdlog/include",
+        "Assets/Shaders",
+        "Assets/Models",
+        "Third_Party/spdlog/include",
 
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.ImGui}",
@@ -60,11 +61,12 @@ project "pzEngine-Core"
 
     -- WINDOWS BUILD WITH VISUAL STUDIO
     filter {"system:windows", "action:vs*"}
-    prebuildcommands
-    {
-        "%{wks.location}\\pzEngine-Core\\Shaders\\glslc.exe Shaders\\simple_shader.vert -o Shaders\\simple_shader.vert.spv",
-        "%{wks.location}\\pzEngine-Core\\Shaders\\glslc.exe Shaders\\simple_shader.frag -o Shaders\\simple_shader.frag.spv"
-    }
+    buildoptions { "/utf-8" }
+    -- prebuildcommands
+    -- {
+    --    "%{wks.location}\\pzEngine-Core\\Shaders\\glslc.exe Shaders\\simple_shader.vert -o Shaders\\simple_shader.vert.spv",
+    --    "%{wks.location}\\pzEngine-Core\\Shaders\\glslc.exe Shaders\\simple_shader.frag -o Shaders\\simple_shader.frag.spv"
+    -- }
 
 
     filter "configurations:Debug"
@@ -86,8 +88,8 @@ project "pzEngine-Core"
 
 
     --  TODO COMPLETE LINUX BUILD
-    filter {"system:linux"}
-        prebuildcommands { GLSLC_PATH .. "/Linux/glslc Shaders/simple_shader.vert -o Shaders/simple_shader.vert.spv", GLSLC_PATH .. "/Linux/glslc Shaders/simple_shader.frag -o Shaders/simple_shader.frag.spv" }
-        buildoptions { "-I. -I$(VULKAN_SDK_PATH)/include"}
-        linkoptions { "-L$(VULKAN_SDK_PATH)/lib `pkg-config --static --libs glfw3` -lvulkan" }
-        defines { }
+    -- filter {"system:linux"}
+    --    prebuildcommands { GLSLC_PATH .. "/Linux/glslc Shaders/simple_shader.vert -o Shaders/simple_shader.vert.spv", GLSLC_PATH .. "/Linux/glslc Shaders/simple_shader.frag -o Shaders/simple_shader.frag.spv" }
+    --    buildoptions { "-I. -I$(VULKAN_SDK_PATH)/include"}
+    --    linkoptions { "-L$(VULKAN_SDK_PATH)/lib `pkg-config --static --libs glfw3` -lvulkan" }
+    --    defines { }

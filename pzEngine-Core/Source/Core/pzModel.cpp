@@ -4,7 +4,7 @@
 #include "pzUtils.hpp"
 
 #define TINYOBJLOADER_IMPLEMENTATION
-#include <../vendor/tinyobjloader/tiny_obj_loader.h> // ! TODO refactor this
+#include <../Third_Party/tinyobjloader/tiny_obj_loader.h> // ! TODO refactor this
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
 
@@ -72,7 +72,7 @@ namespace pz
 			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
 		);
-            
+
         pzDevice.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), bufferSize);
     }
 
@@ -128,7 +128,7 @@ namespace pz
         VkBuffer buffers[] = {vertexBuffer->getBuffer()};
         VkDeviceSize offsets[] = {0};
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-        
+
         if (hasIndexBuffer)
         {
             vkCmdBindIndexBuffer(commandBuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
@@ -172,7 +172,7 @@ namespace pz
             std::cout << warn + err << std::endl;
             throw std::runtime_error(warn + err);
         }
-        
+
         vertices.clear();
         indices.clear();
 
@@ -190,7 +190,7 @@ namespace pz
                                         attrib.vertices[3 * index.vertex_index + 1],
                                         attrib.vertices[3 * index.vertex_index + 2],
                     };
-                
+
                     vertex.color = {    attrib.colors[3 * index.vertex_index + 0],
                                         attrib.colors[3 * index.vertex_index + 1],
                                         attrib.colors[3 * index.vertex_index + 2],
@@ -211,13 +211,13 @@ namespace pz
                                         attrib.texcoords[2 * index.texcoord_index + 1]
                     };
                 }
-            
+
                 if (uniqueVertices.count(vertex) == 0)
                 {
                     uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
                     vertices.push_back(vertex);
                 }
-                
+
                 indices.push_back(uniqueVertices[vertex]);
             }
         }

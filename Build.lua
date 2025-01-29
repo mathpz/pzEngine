@@ -14,8 +14,8 @@ workspace "pzEngine"
    OutputDir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 
 group "Dependencies"
-   include "pzEngine-Core/vendor/GLFW"
-   include "pzEngine-Core/vendor/imgui"
+   include "pzEngine-Core/Third_Party/glfw"
+   include "pzEngine-Core/Third_Party/imgui"
 group ""
 
 group "Core"

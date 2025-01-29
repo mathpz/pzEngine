@@ -56,8 +56,8 @@ namespace pz
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+		//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
@@ -74,8 +74,9 @@ namespace pz
 		init_info.MinImageCount = 3;
 		init_info.ImageCount = 3;
 		init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+		init_info.RenderPass = app.GetRenderer().getSwapChainRenderPass();
 
-		ImGui_ImplVulkan_Init(&init_info, app.GetRenderer().getSwapChainRenderPass());
+		ImGui_ImplVulkan_Init(&init_info);
 
 
 	}
@@ -103,11 +104,6 @@ namespace pz
 		ImGui::Render();
 		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), app.GetRenderer().getCurrentCommandBuffer());
 
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-		}
 	}
 
 	void ImGuiLayer::onImGuiRender()

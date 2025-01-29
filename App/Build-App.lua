@@ -20,13 +20,16 @@ project "First-App"
         "%{wks.location}/pzEngine-Core/Source",
         
         -- vendor
-        "%{wks.location}/pzEngine-Core/vendor/spdlog/include",
-        "%{wks.location}/pzEngine-Core/vendor",
+        "%{wks.location}/pzEngine-Core/Third_Party/spdlog/include",
+        "%{wks.location}/pzEngine-Core/Third_Party",
+
         "%{IncludeDir.glm}",
-        
-        -- these below should not be here, need to refactor pzEngine-Core
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.VulkanSDK}",
+
+        -- TODO FIX THIS
+        -- added path to vulkan manually on visual studio to work
+        -- added Third_Party\glm\glm
     }
 
     links
@@ -42,6 +45,7 @@ project "First-App"
 
    filter "system:windows"
        systemversion "latest"
+       buildoptions { "/utf-8" }
 
    filter "configurations:Debug"
        defines { "PZ_DEBUG" }

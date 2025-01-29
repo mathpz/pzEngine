@@ -18,8 +18,6 @@
 
 // imgui
 #include "imgui.h"
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_vulkan.h"
 
 namespace pz
 {
@@ -168,7 +166,7 @@ namespace pz
 
 
     void Application::loadGameObjects() {
-        std::shared_ptr<PzModel> model = PzModel::createModelFromFile(pzDevice, "F:\\programmingProjects\\pzEngine\\pzEngine-Core\\models\\flat_vase.obj");
+        std::shared_ptr<PzModel> model = PzModel::createModelFromFile(pzDevice, "E:\\programmingProjects\\pzEngine\\pzEngine-Core\\Assets\\Models\\flat_vase.obj");
 
         auto flatVase = PzGameObject::createGameObject();
         flatVase.model = model;
@@ -177,7 +175,7 @@ namespace pz
         gameObjects.emplace(flatVase.getId(), std::move(flatVase));
 
 
-        model = PzModel::createModelFromFile(pzDevice, "F:\\programmingProjects\\pzEngine\\pzEngine-Core\\models\\among_us.obj");
+        model = PzModel::createModelFromFile(pzDevice, "E:\\programmingProjects\\pzEngine\\pzEngine-Core\\Assets\\Models\\among_us.obj");
         auto smoothVase = PzGameObject::createGameObject();
         smoothVase.model = model;
         smoothVase.transform.translation = { .5f, 0.5f, 0.f };
@@ -185,7 +183,7 @@ namespace pz
         smoothVase.transform.scale = { 0.005f,0.005f, 0.005f };
         gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
 
-        model = PzModel::createModelFromFile(pzDevice, "F:\\programmingProjects\\pzEngine\\pzEngine-Core\\models\\quad.obj");
+        model = PzModel::createModelFromFile(pzDevice, "E:\\programmingProjects\\pzEngine\\pzEngine-Core\\Assets\\Models\\quad.obj");
         auto floor = PzGameObject::createGameObject();
         floor.model = model;
         floor.transform.translation = { 0.f, 0.5f, 0.f };

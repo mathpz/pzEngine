@@ -56,8 +56,8 @@ namespace pz
         pipelineConfig.renderPass = renderPass;
         pipelineConfig.pipelineLayout = pipelineLayout;
         pzPipeline = std::make_unique<PzPipeline>(pzDevice,
-            "F:/programmingProjects/pzEngine/pzEngine-Core/Shaders/point_light.vert.spv",
-            "F:/programmingProjects/pzEngine/pzEngine-Core/Shaders/point_light.frag.spv",
+            "E:/programmingProjects/pzEngine/pzEngine-Core/Assets/Shaders/point_light.vert.spv",
+            "E:/programmingProjects/pzEngine/pzEngine-Core/Assets/Shaders/point_light.frag.spv",
             pipelineConfig);
 
     }   // TODO : change absolute path to relative

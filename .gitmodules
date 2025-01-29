@@ -1,0 +1,15 @@
+[submodule "pzEngine-Core/Third_Party/glm"]
+	path = pzEngine-Core/Third_Party/glm
+	url = git@github.com:g-truc/glm.git
+[submodule "pzEngine-Core/Third_Party/glfw"]
+	path = pzEngine-Core/Third_Party/glfw
+	url = git@github.com:glfw/glfw.git
+[submodule "pzEngine-Core/Third_Party/imgui"]
+	path = pzEngine-Core/Third_Party/imgui
+	url = git@github.com:ocornut/imgui.git
+[submodule "pzEngine-Core/Third_Party/tinyobjloader"]
+	path = pzEngine-Core/Third_Party/tinyobjloader
+	url = git@github.com:tinyobjloader/tinyobjloader.git
+[submodule "pzEngine-Core/Third_Party/spdlog"]
+	path = pzEngine-Core/Third_Party/spdlog
+	url = git@github.com:gabime/spdlog.git

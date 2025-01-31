@@ -7,6 +7,7 @@
 [submodule "pzEngine-Core/Third_Party/imgui"]
 	path = pzEngine-Core/Third_Party/imgui
 	url = git@github.com:ocornut/imgui.git
+	ignore = dirty
 [submodule "pzEngine-Core/Third_Party/tinyobjloader"]
 	path = pzEngine-Core/Third_Party/tinyobjloader
 	url = git@github.com:tinyobjloader/tinyobjloader.git

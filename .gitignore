@@ -24,6 +24,7 @@ bin/
 
 # Files #
 ###################
+*.ini
 test.cpp
 vkInstance.cpp
 /Makefile
@@ -48,3 +49,4 @@ main.cpp
 .vs/pzEngine/v17/Solution.VC.db-wal
 .vs/pzEngine/v17/ipch/68b0831650dc708c.ipch
 .vs/pzEngine/v17/ipch/AutoPCH/1fc975742a2938ac/APPLICATION.ipch
+App/imgui.ini

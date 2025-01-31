@@ -55,7 +55,8 @@ project "pzEngine-Core"
     {
         "GLFW",
         "vulkan-1",
-        "ImGui"
+        "ImGui",
+        "vk-bootstrap"
     }
 
 

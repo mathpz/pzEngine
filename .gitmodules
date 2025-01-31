@@ -14,3 +14,6 @@
 [submodule "pzEngine-Core/Third_Party/spdlog"]
 	path = pzEngine-Core/Third_Party/spdlog
 	url = git@github.com:gabime/spdlog.git
+[submodule "pzEngine-Core/Third_Party/vk-bootstrap"]
+	path = pzEngine-Core/Third_Party/vk-bootstrap
+	url = git@github.com:charles-lunarg/vk-bootstrap.git

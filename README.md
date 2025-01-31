@@ -12,3 +12,5 @@ or
 ```
 git clone --recursive-submodules blabla
 ```
+
+TODO: create script to build cmake dependencies (vk-bootstrap)

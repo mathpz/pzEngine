@@ -8,23 +8,19 @@
 
 #include "Core/pzWindow.hpp"
 #include "Core/pzDevice.hpp"
-#include "Core/pzGameObject.hpp"
+// #include "Core/pzGameObject.hpp"
 #include "Core/pzRenderer.hpp"
-#include "Core/pzUniformBuffer.hpp"
-#include "Core/pzDescriptors.hpp"
+// #include "Core/pzUniformBuffer.hpp"
+// #include "Core/pzDescriptors.hpp"
 #include "Core/ImGui/ImGuiLayer.hpp"
 
 namespace pz
 {
-
     class PZ_API Application
     {
     public:
         Application();
         virtual ~Application();
-
-        static constexpr int WIDTH = 800;
-        static constexpr int HEIGHT = 600;
 
         Application(const Application&) = delete;
         Application &operator=(const Application&) = delete;
@@ -39,27 +35,30 @@ namespace pz
         inline static Application& Get() { return *s_Instance; }
         inline pz::PzWindow& GetWindow() { return pzWindow; }
         inline pz::PzDevice& GetDevice() { return pzDevice; }
-        inline pz::PzDescriptorPool& GetDescriptorPool() { return *globalPool; }
+        // inline pz::PzDescriptorPool& GetDescriptorPool() { return *globalPool; }
         inline pz::PzRenderer& GetRenderer() { return pzRenderer; }
-        inline PzGameObject::Map& GetGameObjects() { return gameObjects; }
+        // inline PzGameObject::Map& GetGameObjects() { return gameObjects; }
 
     private:
-        void loadGameObjects();
+        void Init();
+        void ShutDown();
+
+        // void loadGameObjects();
         bool OnWindowClose(WindowCloseEvent& e);
 
         pz::WindowProperties m_WindowProperties {};
         PzWindow pzWindow{m_WindowProperties};
         PzDevice pzDevice{pzWindow};
         PzRenderer pzRenderer{pzWindow, pzDevice};
-
         // note: order of declarations matters
-        std::unique_ptr<PzDescriptorPool> globalPool{};
 
-        std::vector<std::unique_ptr<PzBuffer>> uboBuffers{ PzSwapChain::MAX_FRAMES_IN_FLIGHT };
-        std::unique_ptr<PzDescriptorSetLayout> globalSetLayout{};
-        std::vector<VkDescriptorSet> globlaDescriptorSets{ PzSwapChain::MAX_FRAMES_IN_FLIGHT };
+        // std::unique_ptr<PzDescriptorPool> globalPool{};
+        //
+        // std::vector<std::unique_ptr<PzBuffer>> uboBuffers{ PzSwapChain::MAX_FRAMES_IN_FLIGHT };
+        // std::unique_ptr<PzDescriptorSetLayout> globalSetLayout{};
+        // std::vector<VkDescriptorSet> globlaDescriptorSets{ PzSwapChain::MAX_FRAMES_IN_FLIGHT };
 
-        PzGameObject::Map gameObjects;
+        // PzGameObject::Map gameObjects;
 
         LayerStack m_LayerStack;
         ImGuiLayer* m_ImGuiLayer;

@@ -5,83 +5,36 @@
 // vulkan headers
 #include <vulkan/vulkan.h>
 
-namespace pz {
+namespace pz
+{
 
-class PzSwapChain {
- public:
-  static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
+    class PzSwapChain
+    {
+    public:
+        PzSwapChain();
 
-  PzSwapChain(PzDevice &deviceRef, VkExtent2D windowExtent);
-  PzSwapChain(
-      PzDevice &deviceRef, VkExtent2D windowExtent, std::shared_ptr<PzSwapChain> previous);
+        ~PzSwapChain();
 
-  ~PzSwapChain();
+        VkSwapchainKHR GetSwapchain() const { return m_Swapchain; }
+        std::vector<VkImage> GetSwapchainImages() const { return m_SwapchainImages; }
 
-  PzSwapChain(const PzSwapChain &) = delete;
-  PzSwapChain &operator=(const PzSwapChain &) = delete;
+        void CreateSwapchain(VkPhysicalDevice physDevice, VkDevice device, VkSurfaceKHR surface, uint32_t width, uint32_t height);
+        void DestroySwapchain(VkDevice device);
+        void InitSyncStructures(VkDevice device, std::array<FrameData, FRAME_OVERLAP>& frames);
 
-  VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
-  VkRenderPass getRenderPass() { return renderPass; }
-  VkImageView getImageView(int index) { return swapChainImageViews[index]; }
-  size_t imageCount() { return swapChainImages.size(); }
-  VkFormat getSwapChainImageFormat() { return swapChainImageFormat; }
-  VkExtent2D getSwapChainExtent() { return swapChainExtent; }
-  uint32_t width() { return swapChainExtent.width; }
-  uint32_t height() { return swapChainExtent.height; }
+    private:
+        void Init();
+        void ShutDown();
 
-  float extentAspectRatio() {
-    return static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
-  }
-  VkFormat findDepthFormat();
 
-  VkResult acquireNextImage(uint32_t *imageIndex);
-  VkResult submitCommandBuffers(const VkCommandBuffer *buffers, uint32_t *imageIndex);
+    private:
+        VkSwapchainKHR m_Swapchain;
+        VkFormat m_SwapchainImageFormat;
 
-  bool compareSwapFormats(const PzSwapChain &swapChain) const {
-    return swapChain.swapChainDepthFormat == swapChainDepthFormat &&
-           swapChain.swapChainImageFormat == swapChainImageFormat;
-  }
+        std::vector<VkImage> m_SwapchainImages;
+        std::vector<VkImageView> m_SwapchainImageViews;
+        VkExtent2D m_SwapchainExtent;
 
- private:
-  void init();
-  void createSwapChain();
-  void createImageViews();
-  void createDepthResources();
-  void createRenderPass();
-  void createFramebuffers();
-  void createSyncObjects();
+    };
 
-  // Helper functions
-  VkSurfaceFormatKHR chooseSwapSurfaceFormat(
-      const std::vector<VkSurfaceFormatKHR> &availableFormats);
-  VkPresentModeKHR chooseSwapPresentMode(
-      const std::vector<VkPresentModeKHR> &availablePresentModes);
-  VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
-
-  VkFormat swapChainImageFormat;
-  VkFormat swapChainDepthFormat;
-  VkExtent2D swapChainExtent;
-
-  std::vector<VkFramebuffer> swapChainFramebuffers;
-  VkRenderPass renderPass;
-
-  std::vector<VkImage> depthImages;
-  std::vector<VkDeviceMemory> depthImageMemorys;
-  std::vector<VkImageView> depthImageViews;
-  std::vector<VkImage> swapChainImages;
-  std::vector<VkImageView> swapChainImageViews;
-
-  PzDevice &device;
-  VkExtent2D windowExtent;
-
-  VkSwapchainKHR swapChain;
-  std::shared_ptr<PzSwapChain> oldSwapChain;
-
-  std::vector<VkSemaphore> imageAvailableSemaphores;
-  std::vector<VkSemaphore> renderFinishedSemaphores;
-  std::vector<VkFence> inFlightFences;
-  std::vector<VkFence> imagesInFlight;
-  size_t currentFrame = 0;
-};
-
-}  // namespace lve
+}  // namespace pz

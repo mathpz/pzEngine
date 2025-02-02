@@ -43,7 +43,8 @@ project "pzEngine-Core"
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.VulkanSDK}",
-        "%{IncludeDir.tinyobjloader}"
+        "%{IncludeDir.tinyobjloader}",
+        "%{IncludeDir.vkbootstrap}"
     }
 
     libdirs

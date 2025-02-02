@@ -9,6 +9,7 @@ IncludeDir["glm"] = "%{wks.location}/pzEngine-Core/Third_Party/glm/glm"
 IncludeDir["spdlog"] = "%{wks.location}/pzEngine-Core/Third_Party/spdlog/include"
 IncludeDir["tinyobjloader"] = "%{wks.location}/pzEngine-Core/Third_Party/tinyobjloader"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
+IncludeDir["vkbootstrap"] = "%{wks.location}/pzEngine-Core/Third_Party/vk-bootstrap/src"
 
 LibraryDir = {}
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"

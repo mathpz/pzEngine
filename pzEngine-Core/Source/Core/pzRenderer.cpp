@@ -1,6 +1,9 @@
 #include "pzpch.hpp"
 
 #include "pzRenderer.hpp"
+#include "vk_types.h"
+#include "vk_initializers.h"
+#include "vk_images.h"
 
 // std
 #include <array>
@@ -10,163 +13,89 @@
 namespace pz
 {
 
-    PzRenderer::PzRenderer(PzWindow& pzWindow, PzDevice& pzDevice)
-        : pzWindow{pzWindow}, pzDevice{pzDevice}
+    PzRenderer::PzRenderer(PzWindow& pzWindow, PzDevice& device)
+        : pzWindow{pzWindow}, m_Device{device}
     {
-        recreateSwapChain();
-        createCommandBuffers();
+        m_Swapchain.CreateSwapchain(
+            m_Device.GetPhysicalDevice(),
+            m_Device.GetDevice(),
+            m_Device.GetSurface(),
+            pzWindow.GetWidth(),
+            pzWindow.GetHeight());
+        m_Swapchain.InitSyncStructures(m_Device.GetDevice(), m_Device.GetFrames());
     }
 
-    PzRenderer::~PzRenderer() { freeCommandBuffers(); }
-
-    void PzRenderer::recreateSwapChain()
+    PzRenderer::~PzRenderer()
     {
-        auto extent = pzWindow.getExtent();
-        while (extent.width == 0 || extent.height == 0)
-        {
-            extent = pzWindow.getExtent();
-            glfwWaitEvents();
-        }
-        vkDeviceWaitIdle(pzDevice.device());
-
-        if (pzSwapChain == nullptr)
-        {
-            pzSwapChain = std::make_unique<PzSwapChain>(pzDevice, extent);
-        }
-        else
-        {
-            std::shared_ptr<PzSwapChain> oldSwapChain = std::move(pzSwapChain);
-            pzSwapChain = std::make_unique<PzSwapChain>(pzDevice, extent, oldSwapChain);
-
-            if(!oldSwapChain->compareSwapFormats(*pzSwapChain.get()))
-            {
-                throw std::runtime_error("Swap chain image(or depth) format has changed!");
-            }
-
-
-        }
-
+        m_Swapchain.DestroySwapchain(m_Device.GetDevice());
     }
 
-    void PzRenderer::createCommandBuffers()
+    void PzRenderer::Draw()
     {
-        commandBuffers.resize(PzSwapChain::MAX_FRAMES_IN_FLIGHT);
+        // wait until the gpu has finished rendering the last frame. Timeout of 1
+        // second
+        VK_CHECK(vkWaitForFences(m_Device.GetDevice(), 1, &m_Device.GetCurrentFrame().RenderFence, true, 1000000000));
+        VK_CHECK(vkResetFences(m_Device.GetDevice(), 1, &m_Device.GetCurrentFrame().RenderFence));
 
-        VkCommandBufferAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandPool = pzDevice.getCommandPool();
-        allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
+        uint32_t swapchainImageIndex;
+        VK_CHECK(vkAcquireNextImageKHR(m_Device.GetDevice(), m_Swapchain.GetSwapchain(), 1000000000, m_Device.GetCurrentFrame().SwapchainSemaphore, nullptr, &swapchainImageIndex));
 
-        if (vkAllocateCommandBuffers(pzDevice.device(), &allocInfo, commandBuffers.data()) !=
-            VK_SUCCESS)
-        {
-            throw std::runtime_error("failed to allocate command buffers!");
-        }
-    }
+        VkCommandBuffer cmd = m_Device.GetCurrentFrame().MainCommandBuffer;
+        // now that we are sure that the commands finished executing, we can safely
+        // reset the command buffer to begin recording again.
+        VK_CHECK(vkResetCommandBuffer(cmd, 0));
+        //begin the command buffer recording. We will use this command buffer exactly once, so we want to let vulkan know that
+        VkCommandBufferBeginInfo cmdBeginInfo = vkinit::command_buffer_begin_info(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+        //start the command buffer recording
+        VK_CHECK(vkBeginCommandBuffer(cmd, &cmdBeginInfo));
 
-    void PzRenderer::freeCommandBuffers()
-    {
-        vkFreeCommandBuffers(pzDevice.device(), pzDevice.getCommandPool(), static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
-        commandBuffers.clear();
-    }
+        //make the swapchain image into writeable mode before rendering
+        vkutil::transition_image(cmd, m_Swapchain.GetSwapchainImages()[swapchainImageIndex], VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
+        //make a clear-color from frame number. This will flash with a 120 frame period.
+        VkClearColorValue clearValue;
+        float flash = std::abs(std::sin(m_Device.GetFrameNumber() / 120.f));
+        clearValue = { { 0.0f, 0.0f, flash, 1.0f } };
+        VkImageSubresourceRange clearRange = vkinit::image_subresource_range(VK_IMAGE_ASPECT_COLOR_BIT);
+        //clear image
+        vkCmdClearColorImage(cmd, m_Swapchain.GetSwapchainImages()[swapchainImageIndex], VK_IMAGE_LAYOUT_GENERAL, &clearValue, 1, &clearRange);
+        //make the swapchain image into presentable mode
+        vkutil::transition_image(cmd, m_Swapchain.GetSwapchainImages()[swapchainImageIndex], VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+        //finalize the command buffer (we can no longer add commands, but it can now be executed)
+        VK_CHECK(vkEndCommandBuffer(cmd));
 
-    VkCommandBuffer PzRenderer::beginFrame()
-    {
-        assert(!m_isFrameStarted && "Can't call beginFrame while already in progress");
-        
-        auto result = pzSwapChain->acquireNextImage(&m_currentImageIndex);
+        //prepare the submission to the queue.
+            //we want to wait on the _presentSemaphore, as that semaphore is signaled when the swapchain is ready
+            //we will signal the _renderSemaphore, to signal that rendering has finished
+        VkCommandBufferSubmitInfo cmdinfo = vkinit::command_buffer_submit_info(cmd);
+        VkSemaphoreSubmitInfo waitInfo = vkinit::semaphore_submit_info(VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT_KHR, m_Device.GetCurrentFrame().SwapchainSemaphore);
+        VkSemaphoreSubmitInfo signalInfo = vkinit::semaphore_submit_info(VK_PIPELINE_STAGE_2_ALL_GRAPHICS_BIT, m_Device.GetCurrentFrame().RenderSemaphore);
+        VkSubmitInfo2 submit = vkinit::submit_info(&cmdinfo, &signalInfo, &waitInfo);
+        //submit command buffer to the queue and execute it.
+        // _renderFence will now block until the graphic commands finish execution
+        VK_CHECK(vkQueueSubmit2(m_Device.GetGraphicsQueue(), 1, &submit, m_Device.GetCurrentFrame().RenderFence));
 
-        if (result == VK_ERROR_OUT_OF_DATE_KHR)
-        {
-            recreateSwapChain();
-            return nullptr;
-        }
+        VkSwapchainKHR swapchain = m_Swapchain.GetSwapchain();
+        //prepare present
+        // this will put the image we just rendered to into the visible window.
+        // we want to wait on the _renderSemaphore for that,
+        // as its necessary that drawing commands have finished before the image is displayed to the user
+        VkPresentInfoKHR presentInfo = {};
+        presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+        presentInfo.pNext = nullptr;
+        presentInfo.pSwapchains = &swapchain;
+        presentInfo.swapchainCount = 1;
 
-        if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
-        {
-            throw std::runtime_error("failed to acquire swap chain image!");
-        }
+        presentInfo.pWaitSemaphores = &m_Device.GetCurrentFrame().RenderSemaphore;
+        presentInfo.waitSemaphoreCount = 1;
 
-        m_isFrameStarted = true;
+        presentInfo.pImageIndices = &swapchainImageIndex;
 
-        auto commandBuffer = getCurrentCommandBuffer();
-        VkCommandBufferBeginInfo beginInfo{};
-        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        VK_CHECK(vkQueuePresentKHR(m_Device.GetGraphicsQueue(), &presentInfo));
 
-        if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
-        {
-            throw std::runtime_error("failed to begin recording command buffer!");
-        }
-
-        return commandBuffer;
-    }
-
-    void PzRenderer::endFrame()
-    {
-        assert(m_isFrameStarted && "Can't call endFrame while frame is not in progress");
-        auto commandBuffer = getCurrentCommandBuffer();
-
-        if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
-        {
-            throw std::runtime_error("failed to record command buffer!");
-        }
-
-        auto result = pzSwapChain->submitCommandBuffers(&commandBuffer, &m_currentImageIndex);
-        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || pzWindow.wasWindowResized())
-        {
-            pzWindow.resetWindowResizedFlag();
-            recreateSwapChain();
-        }
-        else if (result != VK_SUCCESS)
-        {
-            throw std::runtime_error("failed to present swap chain image!");
-        }
-
-        m_isFrameStarted = false;
-        m_currentFrameIndex = (m_currentFrameIndex + 1) % PzSwapChain::MAX_FRAMES_IN_FLIGHT;
-    }
-
-    void PzRenderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer)
-    {
-        assert(m_isFrameStarted && "Can't call beginSwapChainRenderPass if frame is not in progress");
-        assert(commandBuffer == getCurrentCommandBuffer() && "Can't begin render pass on command buffer from a different frame");
-
-        VkRenderPassBeginInfo renderPassInfo{};
-        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        renderPassInfo.renderPass = pzSwapChain->getRenderPass();
-        renderPassInfo.framebuffer = pzSwapChain->getFrameBuffer(m_currentImageIndex);
-
-        renderPassInfo.renderArea.offset = {0, 0};
-        renderPassInfo.renderArea.extent = pzSwapChain->getSwapChainExtent();
-
-        std::array<VkClearValue, 2> clearValues{};
-        clearValues[0].color = {0.01f, 0.01f, 0.01f, 1.0f};
-        clearValues[1].depthStencil = {1.0f, 0};
-        renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-        renderPassInfo.pClearValues = clearValues.data();
-
-        vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-        VkViewport viewport{};
-        viewport.x = 0.0f;
-        viewport.y = 0.0f;
-        viewport.width = static_cast<float>(pzSwapChain->getSwapChainExtent().width);
-        viewport.height = static_cast<float>(pzSwapChain->getSwapChainExtent().height);
-        viewport.minDepth = 0.0f;
-        viewport.maxDepth = 1.0f;
-        VkRect2D scissor{{0, 0}, pzSwapChain->getSwapChainExtent()};
-        vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
-        vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+        //increase the number of frames drawn
+        m_Device.m_FrameNumber++;
 
     }
 
-    void PzRenderer::endSwapChainRenderPass(VkCommandBuffer commandBuffer)
-    {
-        assert(m_isFrameStarted && "Can't call endSwapChainRenderPass if frame is not in progress");
-        assert(commandBuffer == getCurrentCommandBuffer() && "Can't end render pass on command buffer from a different frame");
-
-        vkCmdEndRenderPass(commandBuffer);
-    }
 
 } // namespace pz

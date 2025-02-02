@@ -1,114 +1,69 @@
 #pragma once
 
-// pre compiled header
-#include "pzpch.hpp"
-
 #include "pzWindow.hpp"
 
-namespace pz {
+namespace pz
+{
+	struct FrameData
+	{
+		VkCommandPool CommandPool;
+		VkCommandBuffer MainCommandBuffer;
 
-struct SwapChainSupportDetails {
-  VkSurfaceCapabilitiesKHR capabilities;
-  std::vector<VkSurfaceFormatKHR> formats;
-  std::vector<VkPresentModeKHR> presentModes;
-};
+		VkSemaphore SwapchainSemaphore, RenderSemaphore;
+		VkFence RenderFence;
+	};
 
-struct QueueFamilyIndices {
-  uint32_t graphicsFamily;
-  uint32_t presentFamily;
-  bool graphicsFamilyHasValue = false;
-  bool presentFamilyHasValue = false;
-  bool isComplete() const { return graphicsFamilyHasValue && presentFamilyHasValue; }
-};
+	constexpr unsigned int FRAME_OVERLAP = 2;
 
-class PzDevice {
- public:
-#ifdef PZ_DEBUG
-  const bool enableValidationLayers = true;
-#else
-  const bool enableValidationLayers = false;
-#endif
+	class PzDevice
+	{
+	public:
+		PzDevice(PzWindow& window);
+		~PzDevice();
 
-  PzDevice(PzWindow &window);
-  ~PzDevice();
+		VkInstance GetInstance() const { return m_Instance; }
+		VkPhysicalDevice GetPhysicalDevice() const { return m_PhysicalDevice; }
+		VkDevice GetDevice() const { return m_Device; }
+		VkSurfaceKHR GetSurface() const { return m_Surface; }
 
-  // Not copyable or movable
-  PzDevice(const PzDevice &) = delete;
-  PzDevice &operator=(const PzDevice &) = delete;
-  PzDevice(PzDevice &&) = delete;
-  PzDevice &operator=(PzDevice &&) = delete;
+		uint32_t GetFrameNumber() const { return m_FrameNumber; }
+		FrameData& GetCurrentFrame() { return m_Frames[m_FrameNumber % FRAME_OVERLAP]; }
 
-  VkCommandPool getCommandPool() const { return commandPool; }
-  VkDevice device() const { return device_; }
-  VkSurfaceKHR surface() const { return surface_; }
-  VkQueue graphicsQueue() const { return graphicsQueue_; }
-  VkQueue presentQueue() const { return presentQueue_; }
+		VkQueue GetGraphicsQueue() const { return m_GraphicsQueue; }
+
+		std::array<FrameData, FRAME_OVERLAP>& GetFrames() { return m_Frames; }
+		uint32_t m_FrameNumber = 0;
+
+	private:
+		void Init();
+		void Shutdown();
+
+		void CreateCommandPool();
+
+	private:
+		PzWindow &m_Window;
+
+		VkInstance m_Instance;
+		VkDebugUtilsMessengerEXT m_DebugMessenger;
+		VkPhysicalDevice m_PhysicalDevice;
+		VkDevice m_Device;
+		VkSurfaceKHR m_Surface;
 
 
-  // gets for imgui
-  VkInstance getInstance() const { return instance; }
-  VkPhysicalDevice getPhysicalDevice() const { return physicalDevice; }
-  uint32_t getQueueFamily() { return findQueueFamilies(physicalDevice).graphicsFamily; }
-  VkQueue getQueue() const { return graphicsQueue_; }
+		std::array<FrameData, FRAME_OVERLAP> m_Frames;
 
-  SwapChainSupportDetails getSwapChainSupport() { return querySwapChainSupport(physicalDevice); }
-  uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-  QueueFamilyIndices findPhysicalQueueFamilies() { return findQueueFamilies(physicalDevice); }
-  VkFormat findSupportedFormat(
-      const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+		VkQueue m_GraphicsQueue;
+		uint32_t m_GraphicsQueueFamily;
 
-  // Buffer Helper Functions
-  void createBuffer(
-      VkDeviceSize size,
-      VkBufferUsageFlags usage,
-      VkMemoryPropertyFlags properties,
-      VkBuffer &buffer,
-      VkDeviceMemory &bufferMemory);
-  VkCommandBuffer beginSingleTimeCommands();
-  void endSingleTimeCommands(VkCommandBuffer commandBuffer);
-  void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
-  void copyBufferToImage(
-      VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount);
+		// VkQueue m_PresentQueue;
 
-  void createImageWithInfo(
-      const VkImageCreateInfo &imageInfo,
-      VkMemoryPropertyFlags properties,
-      VkImage &image,
-      VkDeviceMemory &imageMemory);
-
-  VkPhysicalDeviceProperties properties;
-
- private:
-  void createInstance();
-  void setupDebugMessenger();
-  void createSurface();
-  void pickPhysicalDevice();
-  void createLogicalDevice();
-  void createCommandPool();
-
-  // helper functions
-  bool isDeviceSuitable(VkPhysicalDevice device);
-  std::vector<const char *> getRequiredExtensions() const;
-  bool checkValidationLayerSupport();
-  QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
-  void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo);
-  void hasGflwRequiredInstanceExtensions();
-  bool checkDeviceExtensionSupport(VkPhysicalDevice device);
-  SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
-
-  VkInstance instance;
-  VkDebugUtilsMessengerEXT debugMessenger;
-  VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-  PzWindow &window;
-  VkCommandPool commandPool;
-
-  VkDevice device_;
-  VkSurfaceKHR surface_;
-  VkQueue graphicsQueue_;
-  VkQueue presentQueue_;
-
-  const std::vector<const char *> validationLayers = {"VK_LAYER_KHRONOS_validation"};
-  const std::vector<const char *> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
-};
-
-}  // namespace pz
+		const std::vector<const char*> m_RequiredDeviceExtensions =
+		{
+			VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME,
+			VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME,		// required by dynamic rendering	     validaiton errors without it
+			VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME,			// required by depth stencil resolve     validaiton errors without it
+			VK_KHR_MULTIVIEW_EXTENSION_NAME,					// same
+			VK_KHR_MAINTENANCE2_EXTENSION_NAME,					// same
+		};
+	};
+} // namespace pz

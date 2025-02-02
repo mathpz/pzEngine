@@ -48,7 +48,8 @@ namespace pz
 
 		VkDescriptorPool imguiPool;
 		Application& app = Application::Get();
-		vkCreateDescriptorPool(app.GetDevice().device(), &pool_info, nullptr, &imguiPool);
+		PzDevice pzDevice = app.GetDevice();
+		vkCreateDescriptorPool(pzDevice.GetDevice(), &pool_info, nullptr, &imguiPool);
 
 		// 2: initialize imgui library
 		//this initializes the core structures of imgui
@@ -63,18 +64,22 @@ namespace pz
 
 		ImGui::StyleColorsDark();
 
+		VkPipelineRenderingCreateInfo pipeRenderingCI = {};
+		pipeRenderingCI.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
+
 		ImGui_ImplGlfw_InitForVulkan(app.GetWindow().getGLFWwindow(), true);
 		//this initializes imgui for Vulkan
 		ImGui_ImplVulkan_InitInfo init_info = {};
-		init_info.Instance = app.GetDevice().getInstance();
-		init_info.PhysicalDevice = app.GetDevice().getPhysicalDevice();
-		init_info.Device = app.GetDevice().device();
-		init_info.Queue = app.GetDevice().getQueue();
+		init_info.UseDynamicRendering = true;
+		init_info.PipelineRenderingCreateInfo = pipeRenderingCI;
+		init_info.Instance = pzDevice.GetInstance();
+		init_info.PhysicalDevice = pzDevice.GetPhysicalDevice();
+		init_info.Device = pzDevice.GetDevice();
+		init_info.Queue = pzDevice.GetGraphicsQueue();
 		init_info.DescriptorPool = imguiPool;
 		init_info.MinImageCount = 3;
 		init_info.ImageCount = 3;
 		init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
-		init_info.RenderPass = app.GetRenderer().getSwapChainRenderPass();
 
 		ImGui_ImplVulkan_Init(&init_info);
 
@@ -99,34 +104,37 @@ namespace pz
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
+		PzDevice pzDevice = app.GetDevice();
 
 		// Rendering
 		ImGui::Render();
-		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), app.GetRenderer().getCurrentCommandBuffer());
+		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), pzDevice.GetCurrentFrame().MainCommandBuffer);
 
 	}
 
 	void ImGuiLayer::onImGuiRender()
 	{
-		Application& app = Application::Get();
+		ImGui::Text("Hello, world %d", 123);
 
-		static float f0 = 0.0f;
-		static float f1 = 0.0f;
-		static float f2 = 0.0f;
-
-		pz::PzGameObject::Map& gameObjects = app.GetGameObjects();
-
-		ImGui::Text("Translation");
-		for (auto& [id, obj] : gameObjects)
-		{
-			ImGui::Text("Object Id: %d", id);
-
-			ImGui::PushID(id);
-			ImGui::SliderFloat("X:", &obj.transform.translation.x, -5.0f, 5.0f);
-			ImGui::SliderFloat("Y:", &obj.transform.translation.y, -5.0f, 5.0f);
-			ImGui::SliderFloat("Z:", &obj.transform.translation.z, -5.0f, 5.0f);
-			ImGui::PopID();
-		}
+		// Application& app = Application::Get();
+		//
+		// static float f0 = 0.0f;
+		// static float f1 = 0.0f;
+		// static float f2 = 0.0f;
+		//
+		// pz::PzGameObject::Map& gameObjects = app.GetGameObjects();
+		//
+		// ImGui::Text("Translation");
+		// for (auto& [id, obj] : gameObjects)
+		// {
+		// 	ImGui::Text("Object Id: %d", id);
+		//
+		// 	ImGui::PushID(id);
+		// 	ImGui::SliderFloat("X:", &obj.transform.translation.x, -5.0f, 5.0f);
+		// 	ImGui::SliderFloat("Y:", &obj.transform.translation.y, -5.0f, 5.0f);
+		// 	ImGui::SliderFloat("Z:", &obj.transform.translation.z, -5.0f, 5.0f);
+		// 	ImGui::PopID();
+		// }
 
 
 	}

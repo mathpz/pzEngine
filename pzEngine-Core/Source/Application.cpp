@@ -21,13 +21,6 @@
 
 namespace pz
 {
-    // TODO: Ensure Construction and destruction order
-    // Creation: Window
-    // Creation: Device -> Instance -> Physical Device -> Logical Device -> Queues -> Command Pool -> Command Buffers
-    // Creation: Swapchain -> Image Views
-    // Creation: Pipeline
-    // Creation: Sync objs
-    // Destruction: backwards order
 
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 

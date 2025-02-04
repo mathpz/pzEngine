@@ -8,9 +8,6 @@ namespace pz
 	{
 		VkCommandPool CommandPool;
 		VkCommandBuffer MainCommandBuffer;
-
-		VkSemaphore SwapchainSemaphore, RenderSemaphore;
-		VkFence RenderFence;
 	};
 
 	constexpr unsigned int FRAME_OVERLAP = 2;
@@ -65,5 +62,7 @@ namespace pz
 			VK_KHR_MULTIVIEW_EXTENSION_NAME,					// same
 			VK_KHR_MAINTENANCE2_EXTENSION_NAME,					// same
 		};
+
+		// todo add VK_EXT_debug_utils
 	};
 } // namespace pz

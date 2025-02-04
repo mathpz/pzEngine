@@ -35,6 +35,14 @@ namespace pz
         std::vector<VkImageView> m_SwapchainImageViews;
         VkExtent2D m_SwapchainExtent;
 
+        struct FrameData
+        {
+            VkSemaphore SwapchainSemaphore, RenderSemaphore;
+            VkFence RenderFence;
+        };
+
+        std::array<FrameData, FRAME_OVERLAP> frames{};
+        std::uint32_t frameNumber{ 0 };
     };
 
 }  // namespace pz

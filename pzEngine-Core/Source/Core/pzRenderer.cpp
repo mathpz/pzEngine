@@ -13,7 +13,7 @@
 namespace pz
 {
 
-    PzRenderer::PzRenderer(PzWindow& pzWindow, PzDevice& device)
+    PzRenderer::PzRenderer(PzWindow& pzWindow, GFXDevice& device)
         : pzWindow{pzWindow}, m_Device{device}
     {
         m_Swapchain.CreateSwapchain(

@@ -4,15 +4,15 @@
 #include "pzpch.hpp"
 
 #include "pzWindow.hpp"
-#include "pzDevice.hpp"
-#include "pzSwapChain.hpp"
+#include "Core/Renderer/Vulkan/GFXDevice.hpp"
+#include "Core/Renderer/Vulkan/Swapchain.hpp"
 
 namespace pz
 {
     class PzRenderer
     {
         public:
-            PzRenderer(PzWindow& pzWindow, PzDevice& device);
+            PzRenderer(PzWindow& pzWindow, GFXDevice& device);
             ~PzRenderer();
 
             bool isFrameInProgress() const { return m_isFrameStarted; }
@@ -21,7 +21,7 @@ namespace pz
         private:
 
             PzWindow& pzWindow;
-            PzDevice& m_Device;
+            GFXDevice& m_Device;
             PzSwapChain m_Swapchain;
             std::vector<VkCommandBuffer> commandBuffers;
 

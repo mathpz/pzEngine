@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pzDevice.hpp"
+#include "Core/Renderer/Vulkan/GFXDevice.hpp"
 
 // vulkan headers
 #include <vulkan/vulkan.h>
@@ -15,7 +15,7 @@ namespace pz
 
         ~PzSwapChain();
 
-        VkSwapchainKHR GetSwapchain() const { return m_Swapchain; }
+        VkSwapchainKHR GetSwapchain() const { return m_Swapchain.swapchain; }
         std::vector<VkImage> GetSwapchainImages() const { return m_SwapchainImages; }
 
         void CreateSwapchain(VkPhysicalDevice physDevice, VkDevice device, VkSurfaceKHR surface, uint32_t width, uint32_t height);
@@ -28,21 +28,21 @@ namespace pz
 
 
     private:
-        VkSwapchainKHR m_Swapchain;
+        vkb::Swapchain m_Swapchain;
         VkFormat m_SwapchainImageFormat;
 
         std::vector<VkImage> m_SwapchainImages;
         std::vector<VkImageView> m_SwapchainImageViews;
         VkExtent2D m_SwapchainExtent;
 
-        struct FrameData
-        {
-            VkSemaphore SwapchainSemaphore, RenderSemaphore;
-            VkFence RenderFence;
-        };
+        // struct FrameData
+        // {
+        //     VkSemaphore SwapchainSemaphore, RenderSemaphore;
+        //     VkFence RenderFence;
+        // };
 
-        std::array<FrameData, FRAME_OVERLAP> frames{};
-        std::uint32_t frameNumber{ 0 };
+        // std::array<FrameData, FRAME_OVERLAP> frames{};
+        // std::uint32_t frameNumber{ 0 };
     };
 
 }  // namespace pz

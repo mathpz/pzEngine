@@ -1,26 +1,34 @@
 #pragma once
 
-#include "pzWindow.hpp"
+#include "Core/pzWindow.hpp"
+
+#include "../Third_Party/vk-bootstrap/src/VkBootstrap.h"
+
+constexpr unsigned int FRAME_OVERLAP = 2;
 
 namespace pz
 {
+
+
 	struct FrameData
 	{
 		VkCommandPool CommandPool;
 		VkCommandBuffer MainCommandBuffer;
+
+		VkSemaphore SwapchainSemaphore, RenderSemaphore;
+		VkFence RenderFence;
+
 	};
 
-	constexpr unsigned int FRAME_OVERLAP = 2;
-
-	class PzDevice
+	class GFXDevice
 	{
 	public:
-		PzDevice(PzWindow& window);
-		~PzDevice();
+		GFXDevice(PzWindow& window);
+		~GFXDevice();
 
-		VkInstance GetInstance() const { return m_Instance; }
-		VkPhysicalDevice GetPhysicalDevice() const { return m_PhysicalDevice; }
-		VkDevice GetDevice() const { return m_Device; }
+		VkInstance GetInstance() const { return m_Instance.instance; }
+		VkPhysicalDevice GetPhysicalDevice() const { return m_PhysicalDevice.physical_device; }
+		VkDevice GetDevice() const { return m_Device.device; }
 		VkSurfaceKHR GetSurface() const { return m_Surface; }
 
 		uint32_t GetFrameNumber() const { return m_FrameNumber; }
@@ -40,10 +48,11 @@ namespace pz
 	private:
 		PzWindow &m_Window;
 
-		VkInstance m_Instance;
+		vkb::Instance m_Instance;
+		vkb::PhysicalDevice m_PhysicalDevice;
+		vkb::Device m_Device;
+
 		VkDebugUtilsMessengerEXT m_DebugMessenger;
-		VkPhysicalDevice m_PhysicalDevice;
-		VkDevice m_Device;
 		VkSurfaceKHR m_Surface;
 
 

@@ -1,8 +1,8 @@
 #include "pzpch.hpp"
 
-#include "pzSwapChain.hpp"
-#include "vk_initializers.h"
-#include "VkBootstrap.h"
+#include "Core/Renderer/Vulkan/Swapchain.hpp"
+#include "Core/vk_initializers.h"
+// #include "VkBootstrap.h"
 
 namespace pz {
 
@@ -28,6 +28,7 @@ namespace pz {
 
     void PzSwapChain::CreateSwapchain(VkPhysicalDevice physDevice, VkDevice device, VkSurfaceKHR surface, uint32_t width, uint32_t height)
     {
+        PZ_CORE_TRACE("Creating swapchain.");
         vkb::SwapchainBuilder swapchainBuilder{ physDevice, device, surface };
         m_SwapchainImageFormat = VK_FORMAT_B8G8R8A8_UNORM;
 
@@ -42,27 +43,32 @@ namespace pz {
         {
             std::cerr << "Failed to create Swap Chain. Error: " << swapchainBuilderReturn.error().message() << "\n";
         }
+        PZ_CORE_TRACE("Swapchain created.");
 
         vkb::Swapchain vkbSwapchain = swapchainBuilderReturn.value();
         m_SwapchainExtent = vkbSwapchain.extent;
-        m_Swapchain = vkbSwapchain.swapchain;
+        m_Swapchain = vkbSwapchain;
         m_SwapchainImages = vkbSwapchain.get_images().value();
         m_SwapchainImageViews = vkbSwapchain.get_image_views().value();
     }
 
     void PzSwapChain::DestroySwapchain(VkDevice device)
     {
-        vkDestroySwapchainKHR(device, m_Swapchain, nullptr);
+        PZ_CORE_TRACE("Destroying swapchain.");
+        vkb::destroy_swapchain(m_Swapchain);
 
         // destroy swapchain resources
         for (int i = 0; i < m_SwapchainImageViews.size(); i++)
         {
             vkDestroyImageView(device, m_SwapchainImageViews[i], nullptr);
         }
+        PZ_CORE_TRACE("Swapchain image views destroyed.");
+        PZ_CORE_TRACE("Swapchain destroyed.");
     }
 
     void PzSwapChain::InitSyncStructures(VkDevice device, std::array<FrameData, FRAME_OVERLAP>& frames)
     {
+        PZ_CORE_TRACE("Initializing sync structures.");
         //create syncronization structures
         //one fence to control when the gpu has finished rendering the frame,
         //and 2 semaphores to syncronize rendering with swapchain
@@ -76,6 +82,9 @@ namespace pz {
             VK_CHECK(vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &frames[i].SwapchainSemaphore));
             VK_CHECK(vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &frames[i].RenderSemaphore));
         }
+        PZ_CORE_TRACE("Fences created.");
+        PZ_CORE_TRACE("Semaphores created.");
+        PZ_CORE_TRACE("Sync structures initialized.");
     }
 
 

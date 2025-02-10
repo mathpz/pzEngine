@@ -7,7 +7,7 @@
 #include "Core/Events/ApplicationEvent.hpp"
 
 #include "Core/pzWindow.hpp"
-#include "Core/pzDevice.hpp"
+#include "Core/Renderer/Vulkan/GFXDevice.hpp"
 // #include "Core/pzGameObject.hpp"
 #include "Core/pzRenderer.hpp"
 // #include "Core/pzUniformBuffer.hpp"
@@ -34,7 +34,7 @@ namespace pz
 
         inline static Application& Get() { return *s_Instance; }
         inline pz::PzWindow& GetWindow() { return pzWindow; }
-        inline pz::PzDevice& GetDevice() { return pzDevice; }
+        // inline pz::PzDevice& GetDevice() { return pzDevice; }
         // inline pz::PzDescriptorPool& GetDescriptorPool() { return *globalPool; }
         inline pz::PzRenderer& GetRenderer() { return pzRenderer; }
         // inline PzGameObject::Map& GetGameObjects() { return gameObjects; }
@@ -48,7 +48,7 @@ namespace pz
 
         pz::WindowProperties m_WindowProperties {};
         PzWindow pzWindow{m_WindowProperties};
-        PzDevice pzDevice{pzWindow};
+        GFXDevice pzDevice{pzWindow};
         PzRenderer pzRenderer{pzWindow, pzDevice};
         // note: order of declarations matters
 

@@ -4,8 +4,8 @@
 #include "Application.hpp"
 
 // pzEngine
-#include "Core/systems/simpleRenderSystem.hpp"
-#include "Core/systems/pointLightSystem.hpp"
+//#include "Core/systems/simpleRenderSystem.hpp"
+//#include "Core/systems/pointLightSystem.hpp"
 #include "Core/pzCamera.hpp"
 #include "Core/IO/keyboard_controller.hpp"
 #include "Core/pzInput.hpp"
@@ -90,15 +90,16 @@ namespace pz
         }
     }
 
-    void Application::Run() {
-
+    void Application::Run()
+    {
+        PZ_CORE_INFO("Application running.");
 
         // SimpleRenderSystem simpleRenderSystem{ pzDevice, pzRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
         // PointLightSystem pointLightSystem{ pzDevice, pzRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout() };
         // PzCamera camera{};
 
-        auto viewerObject = PzGameObject::createGameObject();
-        viewerObject.transform.translation.z = -2.5f;
+        //auto viewerObject = PzGameObject::createGameObject();
+        //viewerObject.transform.translation.z = -2.5f;
         KeyboardMovementController cameraController{};
 
         auto currentTime = std::chrono::high_resolution_clock::now();

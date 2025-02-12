@@ -34,16 +34,13 @@ namespace pz
 
         inline static Application& Get() { return *s_Instance; }
         inline pz::PzWindow& GetWindow() { return pzWindow; }
-        // inline pz::PzDevice& GetDevice() { return pzDevice; }
-        // inline pz::PzDescriptorPool& GetDescriptorPool() { return *globalPool; }
         inline pz::PzRenderer& GetRenderer() { return pzRenderer; }
-        // inline PzGameObject::Map& GetGameObjects() { return gameObjects; }
+
 
     private:
         void Init();
         void ShutDown();
 
-        // void loadGameObjects();
         bool OnWindowClose(WindowCloseEvent& e);
 
         pz::WindowProperties m_WindowProperties {};
@@ -52,13 +49,6 @@ namespace pz
         PzRenderer pzRenderer{pzWindow, pzDevice};
         // note: order of declarations matters
 
-        // std::unique_ptr<PzDescriptorPool> globalPool{};
-        //
-        // std::vector<std::unique_ptr<PzBuffer>> uboBuffers{ PzSwapChain::MAX_FRAMES_IN_FLIGHT };
-        // std::unique_ptr<PzDescriptorSetLayout> globalSetLayout{};
-        // std::vector<VkDescriptorSet> globlaDescriptorSets{ PzSwapChain::MAX_FRAMES_IN_FLIGHT };
-
-        // PzGameObject::Map gameObjects;
 
         LayerStack m_LayerStack;
         ImGuiLayer* m_ImGuiLayer;

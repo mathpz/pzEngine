@@ -13,4 +13,7 @@ or
 git clone --recursive-submodules blabla
 ```
 
-TODO: create script to build cmake dependencies (vk-bootstrap)
+TODO:
+create script to build cmake dependencies (vk-bootstrap)
+Fix vk-bootstrap includes
+change image creation n CFXDevice and Swapchain (see edbr for reference)

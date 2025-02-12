@@ -5,7 +5,7 @@
 
 #include "pzWindow.hpp"
 #include "Core/Renderer/Vulkan/GFXDevice.hpp"
-#include "Core/Renderer/Vulkan/Swapchain.hpp"
+#include "Core/Renderer/Vulkan/GPUImage.hpp"
 
 namespace pz
 {
@@ -18,11 +18,10 @@ namespace pz
             bool isFrameInProgress() const { return m_isFrameStarted; }
 
             void Draw();
-        private:
+    private:
 
             PzWindow& pzWindow;
             GFXDevice& m_Device;
-            PzSwapChain m_Swapchain;
             std::vector<VkCommandBuffer> commandBuffers;
 
             bool m_isFrameStarted = false;

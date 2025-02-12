@@ -1,23 +1,20 @@
 #pragma once
 
 #include "Core/pzWindow.hpp"
+#include "Core/Renderer/Vulkan/Swapchain.hpp"
+#include "Core/Renderer/Vulkan/GPUImage.hpp"
+#include "Core/Renderer/Vulkan/Common.hpp"
 
 #include "../Third_Party/vk-bootstrap/src/VkBootstrap.h"
+#include "vma/vk_mem_alloc.h"
 
-constexpr unsigned int FRAME_OVERLAP = 2;
 
 namespace pz
 {
-
-
 	struct FrameData
 	{
 		VkCommandPool CommandPool;
 		VkCommandBuffer MainCommandBuffer;
-
-		VkSemaphore SwapchainSemaphore, RenderSemaphore;
-		VkFence RenderFence;
-
 	};
 
 	class GFXDevice
@@ -32,15 +29,29 @@ namespace pz
 		VkSurfaceKHR GetSurface() const { return m_Surface; }
 
 		uint32_t GetFrameNumber() const { return m_FrameNumber; }
-		FrameData& GetCurrentFrame() { return m_Frames[m_FrameNumber % FRAME_OVERLAP]; }
+		FrameData& GetCurrentFrame() { return m_Frames[m_FrameNumber % graphics::FRAME_OVERLAP]; }
+		uint32_t GetCurrentFrameIndex() const { return m_FrameNumber % graphics::FRAME_OVERLAP; }
 
 		VkQueue GetGraphicsQueue() const { return m_GraphicsQueue; }
 
-		std::array<FrameData, FRAME_OVERLAP>& GetFrames() { return m_Frames; }
-		uint32_t m_FrameNumber = 0;
+		std::array<FrameData, graphics::FRAME_OVERLAP>& GetFrames() { return m_Frames; }
+
+		// render
+		VkCommandBuffer BeginFrame();
+		// todo check this later
+		struct EndFrameProperties {
+			// const LinearColor clearColor{ 0.f, 0.f, 0.f, 1.f };
+			bool copyImageIntoSwapchain{ true };
+			// glm::ivec4 drawImageBlitRect{}; // where to blit draw image to
+			// bool drawImageLinearBlit{ true }; // if false - nearest filter will be used
+			// bool drawImGui{ true };
+		};
+		void EndFrame(VkCommandBuffer cmd, const GPUImage& drawImage);
+		GPUImage& GetDrawImage() { return m_DrawImage; }
 
 	private:
-		void Init();
+		void Init(bool vsync);
+		void InitGFXDevice();
 		void Shutdown();
 
 		void CreateCommandPool();
@@ -51,17 +62,26 @@ namespace pz
 		vkb::Instance m_Instance;
 		vkb::PhysicalDevice m_PhysicalDevice;
 		vkb::Device m_Device;
+		VmaAllocator m_Allocator;
 
 		VkDebugUtilsMessengerEXT m_DebugMessenger;
+
 		VkSurfaceKHR m_Surface;
+		VkFormat m_SwapchainFormat;
+		Swapchain m_Swapchain;
 
-
-		std::array<FrameData, FRAME_OVERLAP> m_Frames;
+		std::array<FrameData, graphics::FRAME_OVERLAP> m_Frames;
+		uint32_t m_FrameNumber = 0;
 
 		VkQueue m_GraphicsQueue;
 		uint32_t m_GraphicsQueueFamily;
 
 		// VkQueue m_PresentQueue;
+
+		GPUImage m_DrawImage;
+		VkExtent2D m_DrawExtent;
+
+		bool m_VSync = true;
 
 		const std::vector<const char*> m_RequiredDeviceExtensions =
 		{
@@ -72,6 +92,5 @@ namespace pz
 			VK_KHR_MAINTENANCE2_EXTENSION_NAME,					// same
 		};
 
-		// todo add VK_EXT_debug_utils
 	};
 } // namespace pz

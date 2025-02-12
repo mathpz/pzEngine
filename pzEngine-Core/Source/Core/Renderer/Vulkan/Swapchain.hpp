@@ -31,7 +31,7 @@ namespace pz
         std::pair<VkImage, uint32_t> AcquireImage(VkDevice device, uint32_t frameIndex);
         void SubmitAndPresent(VkCommandBuffer cmd, VkQueue graphicsQueue, uint32_t frameIndex, uint32_t swapchainImageIndex);
 
-
+        VkExtent2D GetSwapchainExtent() const { return m_SwapchainExtent; }
 
     private:
         vkb::Swapchain m_Swapchain;

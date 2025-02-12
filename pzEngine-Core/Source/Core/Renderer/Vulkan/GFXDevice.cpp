@@ -57,23 +57,45 @@ namespace pz
 
 		VkImageLayout swapchainLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
-		// clear swapchain Image
-		VkImageSubresourceRange clearRange = vkinit::image_subresource_range(VK_IMAGE_ASPECT_COLOR_BIT);
-		vkutil::transition_image(cmd, swapchainImage, swapchainLayout, VK_IMAGE_LAYOUT_GENERAL);
-		swapchainLayout = VK_IMAGE_LAYOUT_GENERAL;
+		/// clear swapchain image
+		{
+			VkImageSubresourceRange clearRange = vkinit::image_subresource_range(VK_IMAGE_ASPECT_COLOR_BIT);
+			vkutil::transition_image(cmd, swapchainImage, swapchainLayout, VK_IMAGE_LAYOUT_GENERAL);
+			swapchainLayout = VK_IMAGE_LAYOUT_GENERAL;
 
-		// -- tmp
-		VkClearColorValue clearValue;
-		float flash = std::abs(std::sin(m_FrameNumber / 120.f));
-		clearValue = { { 0.0f, 0.0f, flash, 1.0f } };
-		// -- tmp
-		vkCmdClearColorImage(cmd, swapchainImage, VK_IMAGE_LAYOUT_GENERAL, &clearValue, 1, &clearRange);
+			VkClearColorValue clearValue;
+			clearValue = { { 0.53f, 0.81f, 0.92f, 1.0f } };	// light blue
+			vkCmdClearColorImage(cmd, swapchainImage, VK_IMAGE_LAYOUT_GENERAL, &clearValue, 1, &clearRange);
+		}
 
 		// -- copy image to swapchain
 		// if needed this can be made option by implementing EndFrameProperties
-		//vkutil::transition_image(cmd, m_DrawImage.image, VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-		//vkutil::transition_image(cmd, swapchainImage, swapchainLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-		swapchainLayout = VK_IMAGE_LAYOUT_GENERAL;
+		bool tmp_CopyImgToSwapchain = true;
+		if (tmp_CopyImgToSwapchain)
+		{
+			VkImageLayout imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			VkImageSubresourceRange clearRange = vkinit::image_subresource_range(VK_IMAGE_ASPECT_COLOR_BIT);
+			vkutil::transition_image(cmd, m_DrawImage.image, imageLayout, VK_IMAGE_LAYOUT_GENERAL);
+			imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+
+			VkClearColorValue imageColor;
+			float flash = std::abs(std::sin(m_FrameNumber / 120.f));
+			imageColor = { { 0.0f, 0.0f, flash, 1.0f } };
+
+			vkCmdClearColorImage(cmd, m_DrawImage.image, imageLayout, &imageColor, 1, &clearRange);
+
+			// Transition draw image to TRANSFER_SRC_OPTIMAL for copying
+			vkutil::transition_image(cmd, m_DrawImage.image, imageLayout, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+			imageLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+
+			// Transition swapchain image to TRANSFER_DST_OPTIMAL for copying
+			vkutil::transition_image(cmd, swapchainImage, swapchainLayout, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+			swapchainLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+
+			// copy image to swapchain image
+			vkutil::copy_image_to_image(cmd, m_DrawImage.image, swapchainImage, m_DrawImage.GetExtent2D(), m_Swapchain.GetSwapchainExtent());
+			// todo if/else for copy or blit
+		}
 
 		// prepare for present
 		vkutil::transition_image(cmd, swapchainImage, swapchainLayout, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
@@ -86,6 +108,56 @@ namespace pz
 		m_FrameNumber++;
 	}
 
+	//VkFormat format, glm::ivec2 size)
+	void GFXDevice::CreateDrawImage()
+	{
+		PZ_CORE_TRACE("Creating GPUImage.");
+		//draw image size will match the window
+		VkExtent3D drawImageExtent = {
+			m_Window.GetWidth(),
+			m_Window.GetHeight(),
+			1
+		};
+
+		m_DrawImage.imageFormat = VK_FORMAT_R16G16B16A16_SFLOAT;
+		m_DrawImage.imageExtent = drawImageExtent;
+
+		VkImageUsageFlags drawImageUsages{};
+		drawImageUsages |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+		drawImageUsages |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+		drawImageUsages |= VK_IMAGE_USAGE_STORAGE_BIT;
+		drawImageUsages |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+		VkImageCreateInfo rimgInfo = vkinit::image_create_info(m_DrawImage.imageFormat, drawImageUsages, drawImageExtent);
+
+		// for the draw image, we want to allocate it from the gpu local memory
+		VmaAllocationCreateInfo rimgAllocInfo = {};
+		rimgAllocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+		rimgAllocInfo.requiredFlags = VkMemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+		// allocate and create the image
+		vmaCreateImage(m_Allocator, &rimgInfo, &rimgAllocInfo, &m_DrawImage.image, &m_DrawImage.allocation, nullptr);
+
+		//build a image-view for the draw image to use for rendering
+		VkImageViewCreateInfo rViewInfo = vkinit::imageview_create_info(m_DrawImage.imageFormat, m_DrawImage.image, VK_IMAGE_ASPECT_COLOR_BIT);
+
+		VK_CHECK(vkCreateImageView(m_Device.device, &rViewInfo, nullptr, &m_DrawImage.imageView));
+		PZ_CORE_TRACE("GPUImage created.");
+	}
+
+	void GFXDevice::DestroyImage(const GPUImage& image)
+	{
+		PZ_CORE_TRACE("Destroying GPUImage.");
+		vkDestroyImageView(m_Device.device, image.imageView, nullptr);
+		vmaDestroyImage(m_Allocator, image.image, image.allocation);
+		PZ_CORE_TRACE("GPUImage destroyed.");
+	}
+
+	// GPUImage GFXDevice::CreateImageRaw(VkImageCreateInfo imgCreateInfo)
+	// {
+	// 	// todo
+	// }
+
 	void GFXDevice::Init(bool vSync)
 	{
 		InitGFXDevice();
@@ -97,6 +169,8 @@ namespace pz
 		uint32_t height = m_Window.GetHeight();
 		m_SwapchainFormat = VK_FORMAT_B8G8R8A8_SRGB;
 		m_Swapchain.CreateSwapchain(m_Device, m_SwapchainFormat, width, height, m_VSync);
+
+		CreateDrawImage();
 
 		CreateCommandPool();
 	}
@@ -143,6 +217,12 @@ namespace pz
 		// Surface creation
 		m_Window.createWindowSurface(m_Instance, &m_Surface);
 		PZ_CORE_TRACE("Vulkan surface created.");
+
+		const auto features12 = VkPhysicalDeviceVulkan12Features
+		{
+			.bufferDeviceAddress = true,
+		};
+
 		const auto features13 = VkPhysicalDeviceVulkan13Features
 		{
 			.synchronization2 = true,
@@ -153,6 +233,7 @@ namespace pz
 		vkb::PhysicalDeviceSelector physDevSelector(vkbInstance);
 		auto physDevSelectorReturn = physDevSelector
 			.set_minimum_version(1, 3)
+			.set_required_features_12(features12)
 			.set_required_features_13(features13)
 			.set_surface(m_Surface)
 			.select();
@@ -203,6 +284,8 @@ namespace pz
 		}
 		PZ_CORE_TRACE("Command pools destroyed.");
 
+		DestroyImage(m_DrawImage);
+
 		m_Swapchain.DestroySwapchain(m_Device.device);
 		vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
 		PZ_CORE_TRACE("Vulkan surface destroyed.");
@@ -235,6 +318,5 @@ namespace pz
 		}
 		PZ_CORE_TRACE("Command pool created.");
 	}
-
 
 } // namespace pz

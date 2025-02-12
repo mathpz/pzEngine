@@ -36,6 +36,7 @@ void vkutil::transition_image(VkCommandBuffer cmd, VkImage image, VkImageLayout 
 	vkCmdPipelineBarrier2(cmd, &depInfo);
 }
 
+// VkCmdCopyImage is faster but restricted. If needed later another funciton can be created.
 void vkutil::copy_image_to_image(VkCommandBuffer cmd, VkImage source, VkImage destination, VkExtent2D srcSize, VkExtent2D dstSize)
 {
 	VkImageBlit2 blitRegion{ .sType = VK_STRUCTURE_TYPE_IMAGE_BLIT_2, .pNext = nullptr };

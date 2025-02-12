@@ -8,6 +8,7 @@
 #include "../Third_Party/vk-bootstrap/src/VkBootstrap.h"
 #include "vma/vk_mem_alloc.h"
 
+#include "glm/glm.hpp"
 
 namespace pz
 {
@@ -48,6 +49,11 @@ namespace pz
 		};
 		void EndFrame(VkCommandBuffer cmd, const GPUImage& drawImage);
 		GPUImage& GetDrawImage() { return m_DrawImage; }
+
+		// later on do image caching
+		void CreateDrawImage(); // VkFormat format, glm::ivec2 size);
+		// GPUImage CreateImageRaw(VkImageCreateInfo imgCreateInfo);
+		void DestroyImage(const GPUImage& image);
 
 	private:
 		void Init(bool vsync);

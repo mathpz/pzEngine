@@ -12,5 +12,7 @@ namespace pz
 	    VmaAllocation allocation;
 	    VkExtent3D imageExtent;
 	    VkFormat imageFormat;
+
+		VkExtent2D GetExtent2D() const { return VkExtent2D{ imageExtent.width, imageExtent.height }; }
 	};
 } // namespace pz

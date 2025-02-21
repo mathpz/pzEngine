@@ -4,6 +4,11 @@
 #include "Core/Renderer/Vulkan/Swapchain.hpp"
 #include "Core/Renderer/Vulkan/GPUImage.hpp"
 #include "Core/Renderer/Vulkan/Common.hpp"
+#include "Core/Renderer/Vulkan/Descriptors.hpp"
+
+// --- tmp
+#include "Core/Renderer/Pipelines/tutorialBackgroundPipeline.hpp"
+// --- tmp
 
 #include "../Third_Party/vk-bootstrap/src/VkBootstrap.h"
 #include "vma/vk_mem_alloc.h"
@@ -20,6 +25,13 @@ namespace pz
 
 	class GFXDevice
 	{
+	public:
+		DescriptorAllocator globalDescriptorAllocator;
+		VkDescriptorSet m_DrawImageDescriptors;
+		VkDescriptorSetLayout m_DrawImageDescriptorSetLayout;
+
+		BackgroundPipeline m_BackgroundPipeline;
+
 	public:
 		GFXDevice(PzWindow& window);
 		~GFXDevice();
@@ -55,9 +67,11 @@ namespace pz
 		// GPUImage CreateImageRaw(VkImageCreateInfo imgCreateInfo);
 		void DestroyImage(const GPUImage& image);
 
+
 	private:
 		void Init(bool vsync);
 		void InitGFXDevice();
+		void InitDescriptors();
 		void Shutdown();
 
 		void CreateCommandPool();
@@ -86,6 +100,7 @@ namespace pz
 
 		GPUImage m_DrawImage;
 		VkExtent2D m_DrawExtent;
+
 
 		bool m_VSync = true;
 

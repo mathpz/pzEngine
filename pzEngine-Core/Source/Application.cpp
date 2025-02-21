@@ -33,40 +33,11 @@ namespace pz
         PZ_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
 
-        // globalPool = PzDescriptorPool::Builder(pzDevice)
-        //     .setMaxSets(PzSwapChain::MAX_FRAMES_IN_FLIGHT)
-		// 	.addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, PzSwapChain::MAX_FRAMES_IN_FLIGHT)
-		// 	.build();
-
         pzWindow.SetEventCallback(BIND_EVENT_FN(OnEvent));
-
-        // for (int i = 0; i < uboBuffers.size(); i++)
-        // {
-        //     uboBuffers[i] = std::make_unique<PzBuffer>(
-        //         pzDevice,
-        //         sizeof(GlobalUbo),
-        //         1,
-        //         VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-        //         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-        //     uboBuffers[i]->map();
-        // }
-        //
-        // globalSetLayout = PzDescriptorSetLayout::Builder(pzDevice)
-        //     .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
-        //     .build();
-        //
-        // for (int i = 0; i < globlaDescriptorSets.size(); i++)
-        // {
-        //     auto bufferInfo = uboBuffers[i]->descriptorInfo();
-        //     PzDescriptorWriter(*globalSetLayout, *globalPool)
-        //         .writeBuffer(0, &bufferInfo)
-        //         .build(globlaDescriptorSets[i]);
-        // }
 
         //m_ImGuiLayer = new ImGuiLayer();
         //PushOverlay(m_ImGuiLayer);
 
-        // loadGameObjects();
     }
 
     Application::~Application()
@@ -98,8 +69,6 @@ namespace pz
         // PointLightSystem pointLightSystem{ pzDevice, pzRenderer.getSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout() };
         // PzCamera camera{};
 
-        //auto viewerObject = PzGameObject::createGameObject();
-        //viewerObject.transform.translation.z = -2.5f;
         KeyboardMovementController cameraController{};
 
         auto currentTime = std::chrono::high_resolution_clock::now();
@@ -128,25 +97,7 @@ namespace pz
 
             // camera.setPerspectiveProjection(glm::radians(50.f), aspectRatio, 0.1f, 100.f);
 
-            // if (auto commandBuffer = pzRenderer.beginFrame())
-            // {
-                // int frameIndex = pzRenderer.getFrameIndex();
-                // FrameInfo frameInfo{ frameIndex, frameTime, commandBuffer, camera, globlaDescriptorSets[frameIndex], gameObjects};
             pzRenderer.Draw();
-
-                // update
-                // GlobalUbo ubo{};
-                // ubo.projection = camera.getProjectionMatrix();
-                // ubo.view = camera.getView();
-                // ubo.inverseView = camera.getInverseView();
-                // pointLightSystem.update(frameInfo, ubo);
-                // uboBuffers[frameIndex]->writeToBuffer(&ubo);
-                // uboBuffers[frameIndex]->flush();
-
-
-                // order here matters
-                // simpleRenderSystem.renderGameObjects(frameInfo);
-                // pointLightSystem.render(frameInfo);
 
                 //m_ImGuiLayer->Begin();
                // for (Layer* layer : m_LayerStack)

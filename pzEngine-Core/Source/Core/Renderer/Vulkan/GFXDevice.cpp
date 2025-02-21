@@ -25,6 +25,26 @@ namespace pz
 		Shutdown();
 	}
 
+	void GFXDevice::Init(bool vSync)
+	{
+		InitGFXDevice();
+
+		m_Swapchain.InitSyncStructures(m_Device.device);
+
+		CreateDrawImage();
+		InitDescriptors();
+		m_BackgroundPipeline.Init(*this);
+
+		m_VSync = vSync;
+
+		uint32_t width = m_Window.GetWidth();
+		uint32_t height = m_Window.GetHeight();
+		m_SwapchainFormat = VK_FORMAT_B8G8R8A8_SRGB;
+		m_Swapchain.CreateSwapchain(m_Device, m_SwapchainFormat, width, height, m_VSync);
+
+
+		CreateCommandPool();
+	}
 
 	VkCommandBuffer GFXDevice::BeginFrame()
 	{
@@ -52,6 +72,9 @@ namespace pz
 			return;
 		}
 
+		m_DrawExtent.height = std::min(m_Swapchain.GetSwapchainExtent().height, m_DrawImage.imageExtent.height);
+		m_DrawExtent.width = std::min(m_Swapchain.GetSwapchainExtent().width, m_DrawImage.imageExtent.width);
+
 		// Fences are reset here to prevent the deadlock in case swapchain becomes dirty
 		m_Swapchain.ResetFences(m_Device.device, GetCurrentFrameIndex());
 
@@ -70,6 +93,7 @@ namespace pz
 
 		// -- copy image to swapchain
 		// if needed this can be made option by implementing EndFrameProperties
+
 		bool tmp_CopyImgToSwapchain = true;
 		if (tmp_CopyImgToSwapchain)
 		{
@@ -78,11 +102,7 @@ namespace pz
 			vkutil::transition_image(cmd, m_DrawImage.image, imageLayout, VK_IMAGE_LAYOUT_GENERAL);
 			imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 
-			VkClearColorValue imageColor;
-			float flash = std::abs(std::sin(m_FrameNumber / 120.f));
-			imageColor = { { 0.0f, 0.0f, flash, 1.0f } };
-
-			vkCmdClearColorImage(cmd, m_DrawImage.image, imageLayout, &imageColor, 1, &clearRange);
+			m_BackgroundPipeline.Draw(cmd, *this, m_DrawExtent);
 
 			// Transition draw image to TRANSFER_SRC_OPTIMAL for copying
 			vkutil::transition_image(cmd, m_DrawImage.image, imageLayout, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
@@ -153,27 +173,11 @@ namespace pz
 		PZ_CORE_TRACE("GPUImage destroyed.");
 	}
 
+
 	// GPUImage GFXDevice::CreateImageRaw(VkImageCreateInfo imgCreateInfo)
 	// {
 	// 	// todo
 	// }
-
-	void GFXDevice::Init(bool vSync)
-	{
-		InitGFXDevice();
-
-		m_Swapchain.InitSyncStructures(m_Device.device);
-		m_VSync = vSync;
-
-		uint32_t width = m_Window.GetWidth();
-		uint32_t height = m_Window.GetHeight();
-		m_SwapchainFormat = VK_FORMAT_B8G8R8A8_SRGB;
-		m_Swapchain.CreateSwapchain(m_Device, m_SwapchainFormat, width, height, m_VSync);
-
-		CreateDrawImage();
-
-		CreateCommandPool();
-	}
 
 	void GFXDevice::InitGFXDevice()
 	{
@@ -272,6 +276,42 @@ namespace pz
 		PZ_CORE_TRACE("GFXDevice fully initiated.");
 	}
 
+	void GFXDevice::InitDescriptors()
+	{
+		// create a descriptor pool that will hold 10 sets with 1 image each
+		std::vector<DescriptorAllocator::PoolSizeRatio> sizes =
+		{
+			{VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1}
+		};
+
+		globalDescriptorAllocator.InitPool(m_Device.device, 10, sizes);
+
+		// make the descriptor set layout for our compute draw
+		DescriptorlayoutBuilder builder;
+		builder.AddBinding(0, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+		m_DrawImageDescriptorSetLayout = builder.Build(m_Device.device, VK_SHADER_STAGE_COMPUTE_BIT);
+
+		// allocate a descriptor set for our draw image
+		m_DrawImageDescriptors = globalDescriptorAllocator.Allocate(m_Device.device, m_DrawImageDescriptorSetLayout);
+
+		VkDescriptorImageInfo imgInfo{};
+		imgInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+		imgInfo.imageView = m_DrawImage.imageView;
+
+		VkWriteDescriptorSet drawImageWrite = {};
+		drawImageWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		drawImageWrite.pNext = nullptr;
+
+		drawImageWrite.dstBinding = 0;
+		drawImageWrite.dstSet = m_DrawImageDescriptors;
+		drawImageWrite.descriptorCount = 1;
+		drawImageWrite.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+		drawImageWrite.pImageInfo = &imgInfo;
+
+		vkUpdateDescriptorSets(m_Device.device, 1, &drawImageWrite, 0, nullptr);
+
+	}
+
 	void GFXDevice::Shutdown()
 	{
 		PZ_CORE_TRACE("Shutting down GFXDevice.");
@@ -283,6 +323,11 @@ namespace pz
 			m_Frames[i].CommandPool = VK_NULL_HANDLE;
 		}
 		PZ_CORE_TRACE("Command pools destroyed.");
+
+		m_BackgroundPipeline.Cleanup(m_Device.device);
+
+		globalDescriptorAllocator.DestroyPool(m_Device.device);
+		vkDestroyDescriptorSetLayout(m_Device.device, m_DrawImageDescriptorSetLayout, nullptr);
 
 		DestroyImage(m_DrawImage);
 
